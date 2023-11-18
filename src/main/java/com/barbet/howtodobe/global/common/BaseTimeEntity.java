@@ -1,4 +1,4 @@
-package com.barbet.howtodobe.domain;
+package com.barbet.howtodobe.global.common;
 
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalField;

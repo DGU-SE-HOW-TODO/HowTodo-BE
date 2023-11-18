@@ -1,6 +1,6 @@
 package com.barbet.howtodobe.domain.failtag.domain;
 
-import com.barbet.howtodobe.domain.BaseTimeEntity;
+import com.barbet.howtodobe.global.common.BaseTimeEntity;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import lombok.*;
