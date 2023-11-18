@@ -11,8 +11,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "FAILTAG")
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = true)
 public class Failtag extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

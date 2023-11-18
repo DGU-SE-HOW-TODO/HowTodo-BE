@@ -10,8 +10,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "CATEGORY")
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = true)
 public class Category extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

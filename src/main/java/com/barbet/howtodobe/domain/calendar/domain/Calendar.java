@@ -11,8 +11,7 @@ import java.sql.Date;
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "CALENDAR")
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = true)
 public class Calendar extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

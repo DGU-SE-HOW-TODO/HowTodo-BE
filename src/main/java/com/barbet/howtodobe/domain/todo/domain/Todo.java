@@ -12,8 +12,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "TODO")
-@Getter
-@Setter
 public class Todo { // Date 값은 클라이언트로부터 받아야 해서 BaseTimeEntity X
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
