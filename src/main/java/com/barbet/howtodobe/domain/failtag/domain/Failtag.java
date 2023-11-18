@@ -32,13 +32,18 @@ public class Failtag extends BaseTimeEntity {
     private int week;
 
     @Column(nullable = false)
+    private int month;
+
+    @Column(nullable = false)
     private boolean isSelected;
+
 
     @Builder
     public Failtag(Member member, String name, boolean isSelected){
         this.member = member;
         this.name = name;
         this.week = this.calculateWeek();
+        this.month = this.calculateMonth();
         this.isSelected = isSelected;
     }
 }

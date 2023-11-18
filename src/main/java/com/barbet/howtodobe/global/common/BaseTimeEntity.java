@@ -26,11 +26,15 @@ public abstract class BaseTimeEntity {
     public int calculateWeek() {
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         int weekNumber = this.createdDate.get(woy);
+
+        return weekNumber;
+    }
+
+    public int calculateMonth(){
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         int month = this.createdDate.getMonthValue();
 
-        // 이슈: 월도 같이 계산해서 넣어주는게 좋을까
-        System.out.println(month + "월 " + weekNumber + "주차");
-        return weekNumber;
+        return month;
     }
 }
 

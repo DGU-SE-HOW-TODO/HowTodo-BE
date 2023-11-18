@@ -26,11 +26,15 @@ public class Category extends BaseTimeEntity {
     @Column(nullable = false)
     private int week;
 
+    @Column(nullable = false)
+    private int month;
+
     @Builder
     public Category(Member member, String name) {
         this.member = member;
         this.name = name;
         this.week = this.calculateWeek();
+        this.month = this.calculateMonth();
     }
 
 }
