@@ -5,18 +5,13 @@ import com.barbet.howtodobe.domain.member.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
-import java.util.Locale;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "CATEGORY")
 @Getter
 @Setter
-@Builder(builderMethodName = "CategoryBuilder")
 public class Category extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,18 +27,11 @@ public class Category extends BaseTimeEntity {
     @Column(nullable = false)
     private int week;
 
-    private void calculateWeek() {
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        int weekNumber = this.getCreatedDate().get(woy);
-        int month = this.getCreatedDate().getMonthValue();
-
-        // 이슈: 월도 같이 계산해서 넣어주는게 좋을까
-        System.out.println(month + "월 " + weekNumber + "주차");
-        this.week = weekNumber;
+    @Builder
+    public Category(Member member, String name) {
+        this.member = member;
+        this.name = name;
+        this.week = this.calculateWeek();
     }
 
-    public CategoryBuilder builder(Member member, String name){
-        this.calculateWeek();
-        return CategoryBuilder().member(member).name(name).week(week);
-    }
 }
