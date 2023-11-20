@@ -63,6 +63,15 @@ public class TokenProvider implements InitializingBean {
                 .compact();
     }
 
+    public String createToken(Member member, int expirationTime){
+        return Jwts.builder()
+                .setSubject(member.getUsername())
+                .claim("id", member.getMemberId())
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .compact();
+    }
+
     private Claims parseClaimsFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
