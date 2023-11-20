@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     url: jdbc:mysql://localhost:3306/how_todo
-    password:
+    password: Skdus2001!
     hikari:
       connection-test-query: select 1 from dual
   jpa:
@@ -19,3 +19,8 @@ spring:
     show-sql: 'true'
     hibernate:
       ddl-auto: update
+
+jwt:
+  header: Authorization
+  secret:
+  token-validity-in-seconds: 86400

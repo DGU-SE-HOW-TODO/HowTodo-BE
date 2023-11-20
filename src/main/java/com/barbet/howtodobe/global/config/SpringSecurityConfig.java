@@ -1,5 +1,7 @@
 package com.barbet.howtodobe.global.config;
 
+import com.barbet.howtodobe.global.util.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,7 +19,10 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SpringSecurityConfig  {
+
+    private final TokenProvider tokenProvider;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
@@ -54,7 +59,8 @@ public class SpringSecurityConfig  {
                                 .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                                 .antMatchers("/member/**",
                                         "*", "/**").permitAll()
-                                .anyRequest().authenticated());
+                                .anyRequest().authenticated()
+                ).apply(new JwtSecurityConfig(tokenProvider));
         return http.build();
     }
 }
