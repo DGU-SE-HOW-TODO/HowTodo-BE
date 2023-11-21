@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -18,13 +19,11 @@ public class Statistics {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer prevTodoCnt;
-    private Integer prevTodoDoneCnt;
-    private Integer nowTodoCnt;
-    private Integer nowTodoDoneCnt;
-    private Integer rateOfChange;
-    private String nowBestCategory;
-    private String nowWorstFailTag;
+    // TODO 단방향 명시해주기 (양방향은?)
+    private Long weekFailtagId;
+    private Long weekCategoryId;
+    private Long weekAchievementId;
 
-    // 대분류 같은 경우는 enum 타입으로 설정해둬야 하는거 아닌가
+    // TODO 몇 주차인지 로직 변경 필요
+    private LocalDate selectedDate;
 }
