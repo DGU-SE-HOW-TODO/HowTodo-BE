@@ -1,6 +1,7 @@
 package com.barbet.howtodobe.domain.member.dao;
 
 import com.barbet.howtodobe.domain.member.domain.Member;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
