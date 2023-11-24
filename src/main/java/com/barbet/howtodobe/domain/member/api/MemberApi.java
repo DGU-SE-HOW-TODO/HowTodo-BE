@@ -4,7 +4,6 @@ import com.barbet.howtodobe.domain.member.application.MemberSignInService;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.member.dto.SignInRequestDTO;
 import com.barbet.howtodobe.domain.member.dto.SignInResponseDTO;
-import com.barbet.howtodobe.global.common.response.Message;
 import com.barbet.howtodobe.global.util.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
