@@ -29,10 +29,22 @@ public class Todo { // Date 값은 클라이언트로부터 받아야 해서 Bas
     private String name;
 
     @Column(nullable = false)
+    private String priority;
+
+    @Column(name = "is_checked", nullable = true)
     @ColumnDefault("false")
     private boolean isChecked;
 
-    @Column(nullable = false)
+    @Column(name = "is_delay", nullable = true)
     @ColumnDefault("false")
     private boolean isDelay;
+
+    @Builder
+    public Todo(Calendar calendar, Category category, String name, String priority){
+        this.calendar = calendar;
+        this.category = category;
+        this.name = name;
+        this.priority = priority;
+    }
+
 }

@@ -22,7 +22,7 @@ public class MemberEmailDuplicateService {
             return true;
         }
         else{
-            throw new RuntimeException("찾은 멤버가 유효하지 않습니다.");
+            throw new RuntimeException("유효하지 않은 멤버 조회");
         }
     }
 
