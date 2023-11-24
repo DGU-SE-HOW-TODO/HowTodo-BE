@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // CustomErrorCode기반 ResponseEntity 생성
     private ResponseEntity<Object> handleExceptionInternal(CustomErrorCode customErrorCode, String errorMessage) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode(customErrorCode.getCode())
