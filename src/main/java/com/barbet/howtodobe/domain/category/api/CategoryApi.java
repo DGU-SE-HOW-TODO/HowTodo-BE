@@ -16,7 +16,7 @@ public class CategoryApi {
 
     /** 대분류 등록 */
     @PostMapping("/todoCategory")
-    public ResponseEntity<Void> createCategory(@RequestPart("request")CategoryRequestDTO request) {
+    public ResponseEntity<Void> createCategory(@RequestBody CategoryRequestDTO request) {
         categoryService.createCategory(request);
         return ResponseEntity.ok().build();
     }
