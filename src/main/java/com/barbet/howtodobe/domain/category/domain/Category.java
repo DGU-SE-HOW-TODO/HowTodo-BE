@@ -5,12 +5,14 @@ import com.barbet.howtodobe.domain.member.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "CATEGORY")
-@EqualsAndHashCode(callSuper = true)
 public class Category extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,18 +25,21 @@ public class Category extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    /** 생성 요일 */
+    @Column(nullable = false)
+    private LocalDate createDate;
+
     @Column(nullable = false)
     private int week;
 
     @Column(nullable = false)
     private int month;
 
-    @Builder
-    public Category(Member member, String name) {
+    public void createCategory (Member member, String name, LocalDate createDate) {
         this.member = member;
         this.name = name;
         this.week = this.calculateWeek();
         this.month = this.calculateMonth();
+        this.createDate = createDate;
     }
-
 }
