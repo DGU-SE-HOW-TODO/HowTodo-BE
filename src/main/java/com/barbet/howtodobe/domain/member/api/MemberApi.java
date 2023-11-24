@@ -1,7 +1,9 @@
 package com.barbet.howtodobe.domain.member.api;
 
+import com.barbet.howtodobe.domain.member.application.MemberEmailDuplicateService;
 import com.barbet.howtodobe.domain.member.application.MemberSignInService;
 import com.barbet.howtodobe.domain.member.domain.Member;
+import com.barbet.howtodobe.domain.member.dto.EmailDuplicateRequstDTO;
 import com.barbet.howtodobe.domain.member.dto.SignInRequestDTO;
 import com.barbet.howtodobe.domain.member.dto.SignInResponseDTO;
 import com.barbet.howtodobe.global.common.response.ApiStatus;
@@ -12,15 +14,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class MemberApi {
     private final MemberSignInService memberSignInService;
     private final TokenProvider tokenProvider;
+
+    private final MemberEmailDuplicateService memberEmailDuplicateService;
 
     @PostMapping(value = "/member/login", produces = "application/json")
     public ResponseEntity<ApiStatus> authorize(@RequestBody SignInRequestDTO signInRequestDTO){
@@ -35,5 +37,26 @@ public class MemberApi {
                 .apiStatus(new ApiStatus(HowTodoStatus.OK, "로그인 성공"))
                 .data(signInResponseDTO).build(),
                 httpHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/member/{email}", produces = "application/json")
+    public ResponseEntity<ApiStatus> emailDuplicate(@PathVariable("email") String email){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        try {
+            boolean isDuplicate = memberEmailDuplicateService.EmailDuplicateCheck(email);
+            if (isDuplicate) {
+                return new ResponseEntity(
+                        new ApiStatus(HowTodoStatus.DUPLICATE_EMAIL, "중복된 이메일"),
+                        httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            return new ResponseEntity(
+                    new ApiStatus(HowTodoStatus.OK, "이메일 중복 X"),
+                    httpHeaders, HttpStatus.OK);
+        }
+        catch (RuntimeException e){
+            return new ResponseEntity(
+                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, "유효하지 않은 멤버 조회"),
+                    httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
