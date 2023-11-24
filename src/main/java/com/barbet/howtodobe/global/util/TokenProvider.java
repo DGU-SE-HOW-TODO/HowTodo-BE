@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -121,6 +122,19 @@ public class TokenProvider implements InitializingBean {
         Claims claims = parseClaimsFromToken(token);
         return Long.parseLong(claims.get("id").toString());
     }
+
+    /** SecurityContextHolder를 통해 memberId를 가져오는 로직 추가 */
+    // 변수명 User로 통일할건지? 아님 Member로 할건지
+    public Long getMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof Member) {
+            Member member = (Member) authentication.getPrincipal();
+            return member.getMemberId();
+        }
+        return null;
+    }
+
+
 
     /**토큰 정보 추출 */
     public String resolveToken(String authorizationHeaderValue){
