@@ -25,21 +25,16 @@ public class Category extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
-    /** 생성 요일 */
-    @Column(nullable = false)
-    private LocalDate createDate;
-
     @Column(nullable = false)
     private int week;
 
     @Column(nullable = false)
     private int month;
 
-    public void createCategory (Member member, String name, LocalDate createDate) {
+    public void createCategory (Member member, String name) {
         this.member = member;
         this.name = name;
         this.week = this.calculateWeek();
         this.month = this.calculateMonth();
-        this.createDate = createDate;
     }
 }
