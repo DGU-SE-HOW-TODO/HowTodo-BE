@@ -13,9 +13,9 @@ public class ApiStatus {
     private String statusCodeMessage;
     private String statusMessage;
 
-    public ApiStatus(HowTodoStatus howTodoStatus, String errorMessage) {
+    public ApiStatus(HowTodoStatus howTodoStatus, String statusMessage) {
         this.statusCode = howTodoStatus.getErrorCode();
         this.statusCodeMessage = howTodoStatus.getErrorMessage();
-        this.statusMessage = errorMessage;
+        this.statusMessage = statusMessage;
     }
 }
