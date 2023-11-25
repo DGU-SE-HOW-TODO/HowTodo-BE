@@ -17,7 +17,7 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
     @Modifying
     @Query(value = "UPDATE Calendar c " +
             "SET c.successRate = :updated_rate")
-    int updateSuccessRate(@Param("updated_rate") int updated_rate);
+    void updateSuccessRate(@Param("updated_rate") int updated_rate);
 
 
     @Query(value = "SELECT c FROM Calendar c " +
