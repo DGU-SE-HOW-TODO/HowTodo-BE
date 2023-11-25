@@ -9,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiStatus {
-    private String errorCode;
-    private String errorCodeMessage;
-    private String errorMessage;
+    private String statusCode;
+    private String statusCodeMessage;
+    private String statusMessage;
 
-    public ApiStatus(HowTodoStatus howTodoStatus, String errorMessage) {
-        this.errorCode = howTodoStatus.getErrorCode();
-        this.errorCodeMessage = howTodoStatus.getErrorMessage();
-        this.errorMessage = errorMessage;
+    public ApiStatus(HowTodoStatus howTodoStatus, String statusMessage) {
+        this.statusCode = howTodoStatus.getErrorCode();
+        this.statusCodeMessage = howTodoStatus.getErrorMessage();
+        this.statusMessage = statusMessage;
     }
 }

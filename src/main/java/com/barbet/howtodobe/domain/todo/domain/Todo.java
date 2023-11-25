@@ -35,6 +35,10 @@ public class Todo { // Date 값은 클라이언트로부터 받아야 해서 Bas
     @ColumnDefault("false")
     private boolean isChecked;
 
+    @Column(name = "is_fixed", nullable = true)
+    @ColumnDefault("false")
+    private boolean isFixed;
+
     @Column(name = "is_delay", nullable = true)
     @ColumnDefault("false")
     private boolean isDelay;
