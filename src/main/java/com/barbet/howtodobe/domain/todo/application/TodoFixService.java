@@ -16,13 +16,20 @@ public class TodoFixService {
             boolean newIsFixed = todoFixRequestDTO.isFixed();
             newIsFixed = !newIsFixed;
 
+            Todo _todo = todoRepository.findByTodoCategoryId(
+                    todoFixRequestDTO.getTodoId(),
+                    todoFixRequestDTO.getTodoCategoryId()).get();
+
+
+            if (_todo == null) {
+                throw new RuntimeException("해당하는 투두가 존재하지 않음.");
+            }
+
             todoRepository.updateIsFixed(newIsFixed,
                     todoFixRequestDTO.getTodoId(),
                     todoFixRequestDTO.getTodoCategoryId());
 
-            System.out.println("todo updated");
-
-            Todo _todo = todoRepository.findById(todoFixRequestDTO.getTodoId()).get();
+            _todo = todoRepository.findById(todoFixRequestDTO.getTodoId()).get();
 
             if (_todo.getTodoId() > 0){
                 return _todo.isFixed();

@@ -33,6 +33,11 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                     @Param("category_id") Long categoryId,
                                     @Param("name") String name);
 
+    @Query(value = "SELECT t FROM Todo t " +
+            "WHERE t.todoId = :todo_id AND t.category.categoryId = :category_id")
+    Optional<Todo> findByTodoCategoryId(@Param("todo_id") Long todoId,
+                                        @Param("category_id") Long categoryId);
+
     @Transactional
     @Modifying
     @Query(value = "UPDATE Todo t SET t.isFixed = :is_fixed " +
