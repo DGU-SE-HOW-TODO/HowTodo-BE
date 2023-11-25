@@ -1,5 +1,6 @@
 package com.barbet.howtodobe.global.config;
 
+import com.barbet.howtodobe.global.util.JwtAuthenticationFilter;
 import com.barbet.howtodobe.global.util.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.DispatcherType;
 import java.util.Arrays;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 public class SpringSecurityConfig  {
 
     private final TokenProvider tokenProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
@@ -61,6 +64,8 @@ public class SpringSecurityConfig  {
                                         "*", "/**").permitAll()
                                 .anyRequest().authenticated()
                 ).apply(new JwtSecurityConfig(tokenProvider));
+
+        http.addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
         return http.build();
     }
 }
