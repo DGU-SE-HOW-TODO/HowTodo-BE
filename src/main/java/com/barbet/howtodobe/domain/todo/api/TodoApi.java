@@ -2,11 +2,10 @@ package com.barbet.howtodobe.domain.todo.api;
 
 import com.barbet.howtodobe.domain.calendar.application.UpdateSuccessRateService;
 import com.barbet.howtodobe.domain.todo.application.TodoAssignService;
+import com.barbet.howtodobe.domain.todo.application.TodoCheckService;
 import com.barbet.howtodobe.domain.todo.application.TodoFixService;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
-import com.barbet.howtodobe.domain.todo.dto.TodoAssignRequestDTO;
-import com.barbet.howtodobe.domain.todo.dto.TodoFixRequestDTO;
-import com.barbet.howtodobe.domain.todo.dto.TodoFixResponseDTO;
+import com.barbet.howtodobe.domain.todo.dto.*;
 import com.barbet.howtodobe.global.common.response.ApiStatus;
 import com.barbet.howtodobe.global.common.response.HowTodoStatus;
 import com.barbet.howtodobe.global.common.response.Message;
@@ -24,6 +23,7 @@ public class TodoApi {
     private final TodoAssignService todoAssignService;
     private final UpdateSuccessRateService updateSuccessRateService;
     private final TodoFixService todoFixService;
+    private final TodoCheckService todoCheckService;
 
     @PostMapping(value = "/todo/assign", produces = "application/json")
     public ResponseEntity<ApiStatus> assign(@RequestBody TodoAssignRequestDTO todoAssignRequestDTO){
@@ -67,6 +67,34 @@ public class TodoApi {
                     new Message(
                     new ApiStatus(HowTodoStatus.OK, responseMessage),
                     todoFixResponse),
+                    httpHeaders, HttpStatus.OK);
+
+        }catch (RuntimeException e) {
+            return new ResponseEntity(
+                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, e.getMessage()),
+                    httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/todo/check", produces = "application/json")
+    public ResponseEntity<Message> check(@RequestBody TodoCheckRequestDTO todoCheckRequestDTO) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        try {
+            boolean newIsChecked = todoCheckService.checkTodo(todoCheckRequestDTO);
+            String responseMessage;
+            if (newIsChecked){
+                responseMessage = "투두 체크 완료";
+            }
+            else {
+                responseMessage = "투두 체크 해제 완료";
+            }
+
+            TodoCheckResponseDTO todoCheckResponse = new TodoCheckResponseDTO(newIsChecked);
+
+            return new ResponseEntity(
+                    new Message(
+                            new ApiStatus(HowTodoStatus.OK, responseMessage),
+                            todoCheckResponse),
                     httpHeaders, HttpStatus.OK);
 
         }catch (RuntimeException e) {

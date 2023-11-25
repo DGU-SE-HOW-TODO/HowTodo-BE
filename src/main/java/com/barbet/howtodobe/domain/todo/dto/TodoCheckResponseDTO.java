@@ -6,7 +6,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class TodoFixResponseDTO {
-    @JsonProperty("isFixed")
-    boolean isFixed;
+public class TodoCheckResponseDTO {
+    @JsonProperty("isChecked")
+    boolean isChecked;
 }

@@ -15,12 +15,14 @@ public class UpdateSuccessRateService {
     private final TodoRepository todoRepository;
 
     public int updateSuccessRate(Long calendarId) {
-        System.out.println("update success");
         int totalCnt = todoRepository.getTotalTodoCnt(calendarId);
         int successedCnt = todoRepository.getSuccessedTodoCnt(calendarId);
 
-        int updatedRate = calendarRepository.updateSuccessRate(
+        calendarRepository.updateSuccessRate(
                 successedCnt / totalCnt);
+
+        int updatedRate = calendarRepository.findById(calendarId).get()
+                .getSuccessRate();
 
         return updatedRate;
     }

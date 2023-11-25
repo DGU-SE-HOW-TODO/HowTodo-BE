@@ -46,4 +46,12 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                  @Param("todo_id") Long todoId,
                                  @Param("category_id") Long categoryId);
 
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE Todo t SET t.isChecked = :is_checked " +
+            "WHERE t.todoId = :todo_id AND t.category.categoryId = :category_id")
+    void updateIsChecked(@Param("is_checked") boolean isChecked,
+                       @Param("todo_id") Long todoId,
+                       @Param("category_id") Long categoryId);
+
 }
