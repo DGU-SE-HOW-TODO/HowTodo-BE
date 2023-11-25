@@ -55,7 +55,7 @@ public class MemberApi {
         }
         catch (RuntimeException e){
             return new ResponseEntity(
-                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, "유효하지 않은 멤버 조회"),
+                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, e.getMessage()),
                     httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
