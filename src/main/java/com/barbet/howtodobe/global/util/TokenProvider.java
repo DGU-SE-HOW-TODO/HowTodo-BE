@@ -134,8 +134,6 @@ public class TokenProvider implements InitializingBean {
         return null;
     }
 
-
-
     /**토큰 정보 추출 */
     public String resolveToken(String authorizationHeaderValue){
         if(hasText(authorizationHeaderValue) && authorizationHeaderValue.startsWith("Bearer ")){
