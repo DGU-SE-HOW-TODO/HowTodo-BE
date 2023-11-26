@@ -7,16 +7,18 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 
+@Data
 @Entity
-@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "CATEGORY")
 public class Category extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long categoryId;
+    @Column(name = "category_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id", nullable = false)
