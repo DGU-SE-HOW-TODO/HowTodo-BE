@@ -1,15 +1,18 @@
 package com.barbet.howtodobe.domain.statistics.domain;
 
+import com.barbet.howtodobe.domain.category.domain.Category;
+import com.barbet.howtodobe.domain.failtag.domain.Failtag;
+import com.barbet.howtodobe.domain.todo.domain.Todo;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+
+@Data
 @Entity
-@Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -19,11 +22,20 @@ public class Statistics {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO 단방향 명시해주기 (양방향은?)
-    private Long weekFailtagId;
-    private Long weekCategoryId;
-    private Long weekAchievementId;
-
-    // TODO 몇 주차인지 로직 변경 필요
+    private Integer week;
+    private Integer month;
     private LocalDate selectedDate;
+
+    @OneToMany(mappedBy = "statistics", cascade = CascadeType.ALL)
+    private List<Failtag> failtagList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "statistics", cascade = CascadeType.ALL)
+    private List<Todo> todoList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "statistics", cascade = CascadeType.ALL)
+    private List<Category> categoryList = new ArrayList<>();
+
+//    private Long weekFailtagId;
+//    private Long weekCategoryId;
+//    private Long weekAchievementId;
 }
