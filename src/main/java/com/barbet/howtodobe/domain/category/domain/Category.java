@@ -7,7 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
 @Entity
 @Builder
 @AllArgsConstructor
@@ -31,12 +31,4 @@ public class Category extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Integer month;
-
-//    @Builder
-//    public Category(Member member) {
-//        this.member = member;
-//        this.name = this.getName();
-//        this.week = this.calculateWeek();
-//        this.month = this.calculateMonth();
-//    }
 }
