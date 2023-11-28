@@ -12,16 +12,17 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     /** 통계용 */
-
-    // 한 주에 해당하는 대분류 이름 목록 반환 (중복 제거)
-    @Query("SELECT DISTINCT c.name FROM Category c " +
+    // 한 주에 해당하는 대분류 id 목록 반환 (중복 제거)
+    @Query("SELECT DISTINCT c.categoryId FROM Category c " +
             "JOIN FETCH c.member m " +
             "WHERE YEAR(c.createdDate) = :year " +
             "AND MONTH(c.createdDate) = :month " +
             "AND c.week = :week")
-    List<String> findCategoryNamesByDate(@Param("year") Integer year,
+    List<Long> findCategoryIdsByDate(@Param("year") Integer year,
                                          @Param("month") Integer month,
                                          @Param("week") Integer week);
 
+    // 대분류 ID로 대분류명 찾기
+    String findCategoryNameById(Long categoryId);
 
 }
