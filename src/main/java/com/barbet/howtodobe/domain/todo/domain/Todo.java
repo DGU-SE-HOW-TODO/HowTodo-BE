@@ -2,6 +2,9 @@ package com.barbet.howtodobe.domain.todo.domain;
 
 import com.barbet.howtodobe.domain.calendar.domain.Calendar;
 import com.barbet.howtodobe.domain.category.domain.Category;
+import com.barbet.howtodobe.domain.member.domain.Member;
+import com.barbet.howtodobe.domain.statistic.domain.Statistic;
+import com.barbet.howtodobe.global.common.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -12,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "TODO")
-public class Todo { // Date 값은 클라이언트로부터 받아야 해서 BaseTimeEntity X
+public class Todo extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long todoId;
@@ -42,6 +45,19 @@ public class Todo { // Date 값은 클라이언트로부터 받아야 해서 Bas
     @Column(name = "is_delay", nullable = true)
     @ColumnDefault("false")
     private boolean isDelay;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id", nullable = false)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="statistics_id", nullable = false)
+    private Statistic statistics;
+
+    /** 투두 주차만 따로 컬럼으로 설정
+     * : 투두 관련 쿼리 메서드가 없음
+     */
+    private Integer week;
 
     @Builder
     public Todo(Calendar calendar, Category category, String name, String priority){
