@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -54,4 +55,25 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                          @Param("todo_id") Long todoId,
                          @Param("category_id") Long categoryId);
 
+
+
+    /** 통계용 */
+    @Query("SELECT t FROM Todo t " +
+            "JOIN FETCH t.member m " +
+            "WHERE YEAR(t.createdDate) = :year " +
+            "AND MONTH(t.createdDate) = :month " +
+            "AND t.week = :week")
+    List<Todo> findTodoForStatistic (@Param("year") Integer year,
+                                      @Param("month") Integer month,
+                                      @Param("week") Integer week);
+
+    @Query("SELECT t FROM Todo t " +
+            "JOIN FETCH t.member m " +
+            "WHERE YEAR(t.createdDate) = :year " +
+            "AND MONTH(t.createdDate) = :month " +
+            "AND t.week = :week " +
+            "AND t.isChecked = true ")
+    List<Todo> forStatisticByIsCheckedTrue (@Param("year") Integer year,
+                                             @Param("month") Integer month,
+                                             @Param("week") Integer week);
 }
