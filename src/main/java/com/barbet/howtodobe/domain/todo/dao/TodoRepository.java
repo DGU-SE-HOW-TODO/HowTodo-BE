@@ -103,4 +103,29 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     List<Todo> todoForFeedbackByIsDelayTrue (@Param("year") Integer year,
                                              @Param("month") Integer month,
                                              @Param("week") Integer week);
+
+    // 우선 순위 관련
+    @Query("SELECT COUNT(t) FROM Todo t " +
+            "JOIN t.member m " +
+            "WHERE YEAR(t.createdDate) = :year " +
+            "AND MONTH(t.createdDate) = :month " +
+            "AND t.week = :week " +
+            "AND t.priority = :priority")
+    Long countTodoByPriority(@Param("year") Integer year,
+                             @Param("month") Integer month,
+                             @Param("week") Integer week,
+                             @Param("priority") String priority);
+
+    @Query("SELECT COUNT(t) FROM Todo t " +
+            "JOIN t.member m " +
+            "WHERE YEAR(t.createdDate) = :year " +
+            "AND MONTH(t.createdDate) = :month " +
+            "AND t.week = :week " +
+            "AND t.priority = :priority " +
+            "AND t.isChecked = true")
+    Long countTodoByPriorityAndIsChecked(@Param("year") Integer year,
+                                         @Param("month") Integer month,
+                                         @Param("week") Integer week,
+                                         @Param("priority") String priority);
+
 }
