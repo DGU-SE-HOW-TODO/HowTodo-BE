@@ -95,15 +95,17 @@ public class StatisticService {
         List<Todo> prevTodoList = todoRepository.todoForStatistic(year, month, week-1);
         List<Todo> prveTodoDoneList = todoRepository.todoForStatisticByIsCheckedTrue(year, month, week-1);
 
-        Integer prveTodoCnt = prevTodoList.size();
+        Integer prevTodoCnt = prevTodoList.size();
         Integer prevTodoDoneCnt = prveTodoDoneList.size();
         Integer nowTodoCnt = nowTodoList.size();
         Integer nowTodoDoneCnt = nowTodoDoneList.size();
 
         // TODO 이번주나 지난주에 한일이 없거나 아예 투두가 없는 경우 로직 추가
         // +) rateOfChange가 음수인 경우엔 달성률이 더 떨어진건데 이건 프론트가 알아서 처리?
-        Integer rateOfChange = nowTodoCnt/nowTodoDoneCnt - prveTodoCnt/prevTodoDoneCnt;
+        Double prevTodoRate = (prevTodoCnt == 0) ? 0.0 : ((double) prevTodoDoneCnt / prevTodoCnt) * 100.0;
+        Double nowTodoRate = (nowTodoCnt == 0) ? 0.0 : ((double) nowTodoDoneCnt / nowTodoCnt) * 100.0;
 
+        Integer rateOfChange = (prevTodoRate == null || nowTodoRate == null) ? null : nowTodoRate.intValue() - prevTodoRate.intValue();
 
         /** 대분류 관련 */
         List<Long> nowCategoryIdList = categoryRepository.findCategoryIdsByDate(year, month, week);
@@ -118,6 +120,6 @@ public class StatisticService {
         /** 실패 태그 관련 */
 
 
-        return new StatisticResponseDTO(prveTodoCnt, prevTodoDoneCnt, nowTodoCnt, nowTodoDoneCnt, rateOfChange, nowCategoryDate, nowBestCateogry, );
+        return new StatisticResponseDTO(prevTodoCnt, prevTodoDoneCnt, nowTodoCnt, nowTodoDoneCnt, rateOfChange, nowCategoryDate, nowBestCateogry, );
     }
 }
