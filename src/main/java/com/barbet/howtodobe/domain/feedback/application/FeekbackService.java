@@ -36,36 +36,9 @@ public class FeekbackService {
 
     private final TodoRepository todoRepository;
     private final CategoryRepository categoryRepository;
-    private final NowCategoryRepository nowCategoryRepository;
+
 
     /** 미루기 피드백 */
-    public FeekbackResponseDTO getFeedback (LocalDate selectedDate, HttpServletRequest request) {
-        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        Integer year = selectedDate.getYear();
-        Integer month = selectedDate.getMonthValue();
-        Integer week = selectedDate.get(woy);
-
-        /**
-         * 1. 날짜와 isDelayed값이 true인 투두 가져오고, size확인
-         * 2. 해당 리스트에서 자주 미룬 대분류명 추출하기
-         * 3. size에 따라 보여주는 메시지값 설정하기
-         */
-
-        List<Todo> isDelayTodoList = todoRepository.todoForFeedbackByIsDelayTrue(year, month, week);
-
-        Integer delayTodoCnt = isDelayTodoList.size();
-        String mostDelayCategory = categoryRepository.findCategoryNameById(getMostDelayCategoryId(isDelayTodoList));
-
-        // delayTodoCnt에 따라 보여주는 메시지 값 설정하기
-        String delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
-        String delayDetailMessage = getDetailMessageByDelayCnt(delayTodoCnt);
-
-        return new FeekbackResponseDTO();
-    }
-
     // 가장 많이 미룬 카테고리 id
     private Long getMostDelayCategoryId(List<Todo> isDelayTodoList) {
         
@@ -101,10 +74,70 @@ public class FeekbackService {
             return null; // 미룬거 없으면 반환할 메시지 없음
         } else if (delayTodoCnt >= 1 && delayTodoCnt <= 5) {
             // 1~5개 미뤘을 때 메시지
-            return FeedbackDetailMessage.DELAY_1_5.format(delayTodoCnt);
+            return FeedbackDetailMessage.DELAY_DETAIL_MESSAGE_1_5.format(delayTodoCnt);
         } else {
             // 6개 이상 미뤘으면 랜덤으로 tip message 반환
-            return FeedbackDetailMessage.DELAY_6.format(randomDelayTipMessage);
+            return FeedbackDetailMessage.DELAY_DETAIL_MESSAGE_6.format(randomDelayTipMessage);
         }
+    }
+
+
+    /** 피드백 조회 */
+    public FeekbackResponseDTO getFeedback (LocalDate selectedDate, HttpServletRequest request) {
+        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        Integer year = selectedDate.getYear();
+        Integer month = selectedDate.getMonthValue();
+        Integer week = selectedDate.get(woy);
+
+
+        /** 달성률 피드백 */
+        List<Todo> nowTodoList = todoRepository.todoForStatistic(year, month, week);
+        Integer nowTodoCnt = nowTodoList.size(); // 이번주 전체 투두
+        List<Todo> nowTodoDoneList = todoRepository.todoForStatisticByIsCheckedTrue(year, month, week);
+        Integer nowTodoDoneCnt = nowTodoDoneList.size(); // 이번주 달성한 투두
+
+
+        // TODO 저번주 처리 정확하게 해줘야하는데 일단 임시로 week-1로 함
+        List<Todo> prevTodoList = todoRepository.todoForStatistic(year, month, week-1);
+        Integer prevTodoCnt = prevTodoList.size(); // 저번주 전체 투두
+        List<Todo> prevTodoDoneList = todoRepository.todoForStatisticByIsCheckedTrue(year, month, week);
+        Integer prevTodoDoneCnt = prevTodoDoneList.size(); // 저번주 달성한 투두
+
+
+        Double prevTodoRate = (prevTodoCnt == 0) ? 0.0 : ((double) prevTodoDoneCnt / prevTodoCnt) * 100.0;
+        Double nowTodoRate = (nowTodoCnt == 0) ? 0.0 : ((double) nowTodoDoneCnt / nowTodoCnt) * 100.0;
+
+        Integer rateOfChange = (prevTodoRate == null || nowTodoRate == null) ? null : nowTodoRate.intValue() - prevTodoRate.intValue();
+
+        String rateMessage;
+        String rateDetailMessage;
+
+        if (nowTodoRate >= 50) { // 달성률이 50% 이상인 경우
+            rateMessage = null;
+            rateDetailMessage = null;
+        } else { // 달성률이 50% 미만인 경우
+            if (rateOfChange > 0) { // 달성률이 오른 경우
+                rateMessage = FeedbackMessage.INCREASED_RATE_MESSAGE.format(rateOfChange);
+            } else { // 달성률이 떨어진 경우
+                rateMessage = FeedbackMessage.DECREASED_RATE_MESSAGE.format(rateOfChange);
+            }
+            rateDetailMessage = FeedbackDetailMessage.RATE_DETAIL_MESSAGE.getDetailMessage();
+        }
+
+
+        /** 미루기 피드백 */
+        List<Todo> isDelayTodoList = todoRepository.todoForFeedbackByIsDelayTrue(year, month, week);
+
+        Integer delayTodoCnt = isDelayTodoList.size();
+        String mostDelayCategory = categoryRepository.findCategoryNameById(getMostDelayCategoryId(isDelayTodoList));
+
+        // delayTodoCnt에 따라 보여주는 메시지 값 설정하기
+        String delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
+        String delayDetailMessage = getDetailMessageByDelayCnt(delayTodoCnt);
+
+        return new FeekbackResponseDTO();
     }
 }
