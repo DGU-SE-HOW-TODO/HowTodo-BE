@@ -5,6 +5,7 @@ import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.nowCategory.dao.NowCategoryRepository;
 import com.barbet.howtodobe.domain.nowCategory.domain.NowCategory;
+import com.barbet.howtodobe.domain.nowFailtag.domain.NowFailtag;
 import com.barbet.howtodobe.domain.statistic.dto.StatisticResponseDTO;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
@@ -74,6 +75,10 @@ public class StatisticService {
         return nowCategoryDataList;
     }
 
+    /** 실패태그 통계 정보 */
+    private List<NowFailtag> getWeekFailtag(List<Long> )
+
+
 
     /** selectedDate에 따른 통계 값 전체 */
     public StatisticResponseDTO getStatistic (LocalDate selectedDate, HttpServletRequest request) {
@@ -118,6 +123,7 @@ public class StatisticService {
         }
 
         /** 실패 태그 관련 */
+
 
 
         return new StatisticResponseDTO(prevTodoCnt, prevTodoDoneCnt, nowTodoCnt, nowTodoDoneCnt, rateOfChange, nowCategoryDate, nowBestCateogry, );
