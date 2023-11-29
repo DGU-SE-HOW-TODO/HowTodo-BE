@@ -57,7 +57,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
 
 
-    /** 통계용 */
+    /** for STATISTIC */
     // 투두 달성률 (전체)
     @Query("SELECT t FROM Todo t " +
             "JOIN FETCH t.member m " +
@@ -90,4 +90,17 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                      @Param("month") Integer month,
                                      @Param("week") Integer week,
                                      @Param("categoryId") Long categoryId);
+
+
+    /** for FEEDBACK */
+    // 미룬 투두 정보
+    @Query("SELECT t FROM Todo t " +
+            "JOIN FETCH t.member m " +
+            "WHERE YEAR(t.createdDate) = :year " +
+            "AND MONTH(t.createdDate) = :month " +
+            "AND t.week = :week " +
+            "AND t.isDelay = true ")
+    List<Todo> todoForFeedbackByIsDelayTrue (@Param("year") Integer year,
+                                             @Param("month") Integer month,
+                                             @Param("week") Integer week);
 }
