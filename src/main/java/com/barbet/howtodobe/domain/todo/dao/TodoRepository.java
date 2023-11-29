@@ -68,7 +68,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                  @Param("month") Integer month,
                                  @Param("week") Integer week);
 
-    // 투두 달성률 (체크한 것만)
+    // 투두 달성률 (달성한 것)
     @Query("SELECT t FROM Todo t " +
             "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
