@@ -3,7 +3,7 @@ package com.barbet.howtodobe.domain.feedback.dto;
 import lombok.Getter;
 
 @Getter
-public class FeekbackResponseDTO {
+public class FeedbackResponseDTO {
 
     private String rateMessage;
     private String rateDetailMessage;
@@ -17,7 +17,7 @@ public class FeekbackResponseDTO {
     private String delayMessage;
     private String delayDetailMessage;
 
-    public FeekbackResponseDTO(String rateMessage,
+    public FeedbackResponseDTO(String rateMessage,
                                String rateDetailMessage,
                                Integer firstPriPercent,
                                Integer secondPriPercent,

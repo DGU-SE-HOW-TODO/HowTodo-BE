@@ -1,15 +1,13 @@
 package com.barbet.howtodobe.domain.feedback.application;
 
 import com.barbet.howtodobe.domain.category.dao.CategoryRepository;
-import com.barbet.howtodobe.domain.feedback.dto.FeekbackResponseDTO;
+import com.barbet.howtodobe.domain.feedback.dto.FeedbackResponseDTO;
 import com.barbet.howtodobe.domain.feedback.message.FeedbackDetailMessage;
 import com.barbet.howtodobe.domain.feedback.message.FeedbackMessage;
 import com.barbet.howtodobe.domain.feedback.message.RandomDelayTips;
 import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
-import com.barbet.howtodobe.domain.nowCategory.dao.NowCategoryRepository;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
-import com.barbet.howtodobe.domain.todo.domain.Priority;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.global.exception.CustomException;
 import com.barbet.howtodobe.global.util.TokenProvider;
@@ -25,24 +23,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
-public class FeekbackService {
+public class FeedbackService {
 
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
 
     private final TodoRepository todoRepository;
     private final CategoryRepository categoryRepository;
-
-    // TODO :
-    // 1. 퍼센트 계산 부분 리팩토링
-    // 2. public vs private
-    // 3. int vs Integer
 
     private Integer calculateCompletionRate(Long todoCount, Long todoDoneCount) {
         if (todoCount == null || todoCount == 0) {
@@ -100,7 +92,7 @@ public class FeekbackService {
     }
 
     /** 피드백 조회 */
-    public FeekbackResponseDTO getFeedback (LocalDate selectedDate, HttpServletRequest request) {
+    public FeedbackResponseDTO getFeedback (LocalDate selectedDate, HttpServletRequest request) {
         Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
@@ -178,7 +170,7 @@ public class FeekbackService {
         String delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
         String delayDetailMessage = getDetailMessageByDelayCnt(delayTodoCnt);
 
-        return new FeekbackResponseDTO(rateMessage,
+        return new FeedbackResponseDTO(rateMessage,
                 rateDetailMessage,
                 veryImportantTodoPercent,
                 importantTodoPercent,
