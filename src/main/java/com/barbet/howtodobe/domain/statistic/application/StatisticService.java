@@ -11,6 +11,7 @@ import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.global.exception.CustomException;
 import com.barbet.howtodobe.global.util.TokenProvider;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOUND;
 
-@Data
 @Service
 @RequiredArgsConstructor
 public class StatisticService {
@@ -35,7 +35,7 @@ public class StatisticService {
     private final NowCategoryRepository nowCategoryRepository;
 
     /** 대분류 통계 정보 */
-    public List<NowCategory> getWeekCategory(List<Long> categoryIdList, LocalDate selectedDate) {
+    private List<NowCategory> getWeekCategory(List<Long> categoryIdList, LocalDate selectedDate) {
         List<NowCategory> nowCategoryDataList = new ArrayList<>();
 
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
