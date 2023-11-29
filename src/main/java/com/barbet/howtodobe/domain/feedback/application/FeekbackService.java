@@ -9,6 +9,7 @@ import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.nowCategory.dao.NowCategoryRepository;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
+import com.barbet.howtodobe.domain.todo.domain.Priority;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.global.exception.CustomException;
 import com.barbet.howtodobe.global.util.TokenProvider;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOUND;
 
@@ -37,6 +39,22 @@ public class FeekbackService {
     private final TodoRepository todoRepository;
     private final CategoryRepository categoryRepository;
 
+    // TODO :
+    // 1. 퍼센트 계산 부분 리팩토링
+    // 2. public vs private
+    // 3. int vs Integer
+
+    private Integer calculateCompletionRate(Long todoCount, Long todoDoneCount) {
+        if (todoCount == null || todoCount == 0) {
+            return 0;
+        }
+
+        double completionRate = ((double) todoDoneCount / todoCount) * 100.0;
+        return (int) completionRate;
+    }
+    private Integer calculateRateOfChange(Double prevRate, Double nowRate) {
+        return (prevRate == null || nowRate == null) ? null : nowRate.intValue() - prevRate.intValue();
+    }
 
     /** 미루기 피드백 */
     // 가장 많이 미룬 카테고리 id
@@ -80,7 +98,6 @@ public class FeekbackService {
             return FeedbackDetailMessage.DELAY_DETAIL_MESSAGE_6.format(randomDelayTipMessage);
         }
     }
-
 
     /** 피드백 조회 */
     public FeekbackResponseDTO getFeedback (LocalDate selectedDate, HttpServletRequest request) {
@@ -127,6 +144,29 @@ public class FeekbackService {
             rateDetailMessage = FeedbackDetailMessage.RATE_DETAIL_MESSAGE.getDetailMessage();
         }
 
+        /** 우선순위 피드백 */
+        String priorityMessage;
+        String priorityDetailMessage;
+
+        Long veryImportantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "매우 중요");
+        Long veryImportantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "매우 중요");
+        Long importantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "중요");
+        Long importantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "중요");
+        Long notImportantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "중요하지 않음");
+        Long notImportantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "중요하지 않음");
+
+        Integer veryImportantTodoPercent = calculateCompletionRate(veryImportantTodoCnt, veryImportantTodoDoneCnt);
+        Integer importantTodoPercent = calculateCompletionRate(importantTodoCnt, importantTodoDoneCnt);
+        Integer notImportantTodoPercent = calculateCompletionRate(notImportantTodoCnt, notImportantTodoDoneCnt);
+
+        // 우선순위가 [매우 중요]인게 달성률이 가장 낮은 경우
+        if (veryImportantTodoPercent < importantTodoPercent && veryImportantTodoPercent < notImportantTodoPercent) {
+            priorityMessage = FeedbackMessage.PRIORITY_MESSAGE.getMessage();
+            priorityDetailMessage = FeedbackDetailMessage.PRIORITY_DETAIL_MESSAGE.getDetailMessage();
+        } else {
+            priorityMessage = null;
+            priorityDetailMessage = null;
+        }
 
         /** 미루기 피드백 */
         List<Todo> isDelayTodoList = todoRepository.todoForFeedbackByIsDelayTrue(year, month, week);
@@ -138,6 +178,14 @@ public class FeekbackService {
         String delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
         String delayDetailMessage = getDetailMessageByDelayCnt(delayTodoCnt);
 
-        return new FeekbackResponseDTO();
+        return new FeekbackResponseDTO(rateMessage,
+                rateDetailMessage,
+                veryImportantTodoPercent,
+                importantTodoPercent,
+                notImportantTodoPercent,
+                priorityMessage,
+                priorityDetailMessage,
+                delayMessage,
+                delayDetailMessage);
     }
 }
