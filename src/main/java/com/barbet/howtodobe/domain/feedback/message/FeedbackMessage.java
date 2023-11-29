@@ -11,9 +11,8 @@ public enum FeedbackMessage {
     INCREASED_RATE_MESSAGE("저번 주에 비해 목표 달성률이 %d% 올랐지만, 여전히 목표 달성률의 절반을 넘지 못했어요."),
     DECREASED_RATE_MESSAGE("저번 주에 비해 목표 달성률이 %d%만큼 떨어졌고, 목표 달성률의 절반을 넘지 못했어요."),
 
-
     /** 우선순위 피드백 메시지 */
-
+    PRIORITY_MESSAGE("우선순위가 가장 높은 계획을 처리하지 못하셨군요."),
 
     /** 미루기 피드백 메시지 */
     DELAY_MESSAGE("이번주에는 전체 계획 중 미룬 계획이 %d개 있어요." +
