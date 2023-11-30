@@ -12,18 +12,24 @@ import java.util.List;
 @Repository
 public interface FailtagRepository extends JpaRepository<Failtag, Long> {
 
-    @Query("SELECT f.selectedFailtagList FROM Failtag f " +
-            "JOIN FETCH f.member m " +
+//    @Query("SELECT f.selectedFailtagList FROM Failtag f " +
+//            // "JOIN FETCH f.member m " +
+//            "WHERE f.year = :year " +
+//            "AND f.month = :month " +
+//            "AND f.week = :week")
+//    List<String> findFailtagsBySelectedDate (@Param("year") Integer year,
+//                                             @Param("month") Integer month,
+//                                             @Param("week") Integer week);
+
+    @Query("SELECT f FROM Failtag f " +
             "WHERE f.year = :year " +
             "AND f.month = :month " +
             "AND f.week = :week")
-    List<String> findFailtagsBySelectedDate (@Param("year") Integer year,
+    List<Failtag> findFailtagsBySelectedDate (@Param("year") Integer year,
                                              @Param("month") Integer month,
                                              @Param("week") Integer week);
 
-    @Query("SELECT f.name FROM Failtag f WHERE f.failtagId = :failtagId")
-    String findNameByFailtagId(@Param("failtagId") Long failtagId);
 
-
-
+//    @Query("SELECT f.name FROM Failtag f WHERE f.failtagId = :failtagId")
+//    String findNameByFailtagId(@Param("failtagId") Long failtagId);
 }
