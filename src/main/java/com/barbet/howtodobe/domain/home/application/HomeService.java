@@ -30,10 +30,6 @@ public class HomeService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final TodoRepository todoRepository;
-    private final CategoryRepository categoryRepository;
-
-    // TODO 실패태그 관련 로직 추가
-
 
     private Integer calculateCompletionRate(Integer todoCount, Integer todoDoneCount) {
         if (todoCount == null || todoCount == 0) {
@@ -80,9 +76,10 @@ public class HomeService {
                                     todo.getCategory().getName(),
                                     todo.getName(),
                                     todo.getPriority(),
-                                    todo.isChecked(),
-                                    todo.isFixed(),
-                                    todo.getFailtag()
+                                    todo.getIsChecked(),
+                                    todo.getIsFixed(),
+                                    todo.getIsDelay(),
+                                    todo.getFailtagId()
                             ))
                             .collect(Collectors.toList());
                     
@@ -90,8 +87,7 @@ public class HomeService {
                     HomeResponseDTO.TodoCategoryData todocategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList);
                     todoCategoryDataList.add(todocategoryData); // 만든거 계속 추가해
                     todoDataList.addAll(tempTodoDataList); // todoData 완성본
-                });
-                
+                }));
         // 최종적으로 만들어진 데이터 뿌려주기        
         return new HomeResponseDTO(rateOfSuccess, todoCategoryDataList, todayDate, selectedDate, todoDataList);
     }
