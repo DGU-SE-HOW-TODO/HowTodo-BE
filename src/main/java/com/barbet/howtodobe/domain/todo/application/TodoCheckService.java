@@ -15,7 +15,9 @@ public class TodoCheckService {
     public boolean checkTodo(TodoCheckRequestDTO todoCheckRequestDTO){
         try {
             boolean newIsChecked = todoCheckRequestDTO.isChecked();
+            System.out.println("IsChecked:" + newIsChecked);
             newIsChecked = !newIsChecked;
+            System.out.println("newIsChecked:" + newIsChecked);
 
             Todo _todo = todoRepository.findByTodoCategoryId(
                     todoCheckRequestDTO.getTodoId(),
@@ -31,9 +33,9 @@ public class TodoCheckService {
                     todoCheckRequestDTO.getTodoCategoryId());
 
             _todo = todoRepository.findById(todoCheckRequestDTO.getTodoId()).get();
-
+            System.out.println("updatedCheck:" + _todo.isChecked());
             if (_todo.getTodoId() > 0){
-                return _todo.isFixed();
+                return newIsChecked;
             }
             else {
                 throw new RuntimeException("해당하는 투두가 존재하지 않음.");
