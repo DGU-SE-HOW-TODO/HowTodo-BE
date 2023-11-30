@@ -32,7 +32,7 @@ public class HomeResponseDTO {
             private Boolean isChecked;
             private Boolean isFixed;
             private Boolean isDelayed;
-            private Long failtagId;
+            private String failtagName;
 
             public TodoData (Long todoId,
                              String todoCategory,
@@ -41,7 +41,7 @@ public class HomeResponseDTO {
                              Boolean isChecked,
                              Boolean isFixed,
                              Boolean isDelayed,
-                             Long failtagId) {
+                             String failtagName) {
                 this.todoId = todoId;
                 this.todoCategory = todoCategory;
                 this.todoName = todoName;
@@ -49,7 +49,7 @@ public class HomeResponseDTO {
                 this.isChecked = isChecked;
                 this.isFixed = isFixed;
                 this.isDelayed = isDelayed;
-                this.failtagId = failtagId;
+                this.failtagName = failtagName;
             }
         }
     }

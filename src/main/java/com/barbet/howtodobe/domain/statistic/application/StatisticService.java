@@ -61,7 +61,7 @@ public class StatisticService {
             // 3. 해당 Category Id에 대한 투두 중, 달성 완료한 개수
             Integer categoryTodoDoneCnt = Math.toIntExact(todoByCategory.stream().filter(Todo::getIsChecked).count());
 
-            String nowCategory = categoryRepository.findCategoryNameById(categortId);
+            String nowCategory = categoryRepository.findCategoryNameByCategoryId(categortId);
             Integer nowCategoryRate = categoryTodoCnt > 0 ? Integer.valueOf ((int) (categoryTodoDoneCnt * 100.0) / categoryTodoCnt) : null;
 
             // 4. NowCategoryDate DTO 객체 생성 후 리스트에 추가
@@ -84,21 +84,20 @@ public class StatisticService {
     // 매개변수 todoList: selectedDate에 해당하는 투두이면서 FailtagId값이 null인 투두 리스트
     private List<NowFailtag> getWeekFailtagList(List<Todo> todoList) {
 
-        // key : failtagId, value: 각 failtagId별 투두 개수
-        Map<Long, Long> weekFailtagList = todoList.stream()
-                .filter(todo -> todo.getFailtagId() != null)
-                .collect(Collectors.groupingBy(Todo::getFailtagId, Collectors.counting()));
+        // key : failtagName, value: 각 failtagId별 투두 개수
+        Map<String, Long> weekFailtagList = todoList.stream()
+                .filter(todo -> todo.getFailtagName() != null)
+                .collect(Collectors.groupingBy(Todo::getFailtagName, Collectors.counting()));
 
         Integer totalTodoWithFailTagCnt = todoList.size();
 
         return weekFailtagList.entrySet().stream()
                 .map(entry -> {
-                    Long failtagId = entry.getKey();
-                    String nowFailtag = failtagRepository.findNameByFailtagId(failtagId);
+                    String failtagName = entry.getKey();
                     Integer nowFailtagRate = (int) ((entry.getValue() / totalTodoWithFailTagCnt) * 100);
 
                     return NowFailtag.builder()
-                            .nowFailtag(nowFailtag)
+                            .nowFailtag(failtagName)
                             .nowFailtagRate(nowFailtagRate)
                             .build();
                 })

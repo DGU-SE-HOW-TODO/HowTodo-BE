@@ -79,7 +79,7 @@ public class HomeService {
                                     todo.getIsChecked(),
                                     todo.getIsFixed(),
                                     todo.getIsDelay(),
-                                    todo.getFailtagId()
+                                    todo.getFailtagName()
                             ))
                             .collect(Collectors.toList());
                     

@@ -164,7 +164,7 @@ public class FeedbackService {
         List<Todo> isDelayTodoList = todoRepository.todoForFeedbackByIsDelayTrue(year, month, week);
 
         Integer delayTodoCnt = isDelayTodoList.size();
-        String mostDelayCategory = categoryRepository.findCategoryNameById(getMostDelayCategoryId(isDelayTodoList));
+        String mostDelayCategory = categoryRepository.findCategoryNameByCategoryId(getMostDelayCategoryId(isDelayTodoList));
 
         // delayTodoCnt에 따라 보여주는 메시지 값 설정하기
         String delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);

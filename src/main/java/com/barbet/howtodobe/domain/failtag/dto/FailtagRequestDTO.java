@@ -14,6 +14,7 @@ public class FailtagRequestDTO {
     private Integer month;
     private Integer week;
     private List<String> selectedFailtagList;
+
     public Failtag toEntity (Member member) {
         return Failtag.builder()
                 .member(member)
