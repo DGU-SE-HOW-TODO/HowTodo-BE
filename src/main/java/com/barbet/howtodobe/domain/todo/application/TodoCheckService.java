@@ -33,7 +33,7 @@ public class TodoCheckService {
             _todo = todoRepository.findById(todoCheckRequestDTO.getTodoId()).get();
 
             if (_todo.getTodoId() > 0){
-                return _todo.isFixed();
+                return _todo.getIsFixed();
             }
             else {
                 throw new RuntimeException("해당하는 투두가 존재하지 않음.");

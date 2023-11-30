@@ -55,8 +55,8 @@ public class Todo extends BaseTimeEntity {
 //    @JoinColumn(name="statistics_id", nullable = false)
 //    private Statistic statistics;
 
-    @Column(name = "is_checked", nullable = true)
-    private Long failtagId;
+    @Column(nullable = true)
+    private String failtagName;
 
     /** 투두 주차만 따로 컬럼으로 설정
      * : 투두 관련 쿼리 메서드가 없음
@@ -71,7 +71,7 @@ public class Todo extends BaseTimeEntity {
     }
 
     // 실패태그 달고 업데이트
-    public void updateTodoWithFailtag (Long failtagId) {
-        this.failtagId = failtagId;
+    public void updateTodoWithFailtag (String failtagName) {
+        this.failtagName = failtagName;
     }
 }
