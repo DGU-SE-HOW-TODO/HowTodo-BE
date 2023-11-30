@@ -109,8 +109,8 @@ public class TodoApi {
 
     @PostMapping("/todo/failtag")
     public ResponseEntity<Void> enrollTodoWithFailtag(@RequestParam Long todoId,
-                                                      @RequestParam Long failtagId) {
-        todoWithFailtagService.enrollTodoWithFailtag(todoId, failtagId);
+                                                      @RequestParam String failtagName) {
+        todoWithFailtagService.enrollTodoWithFailtag(todoId, failtagName);
         return ResponseEntity.ok().build();
     }
 }
