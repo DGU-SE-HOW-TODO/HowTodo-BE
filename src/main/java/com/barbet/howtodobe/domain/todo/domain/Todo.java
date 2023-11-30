@@ -11,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 
 @Entity
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -59,12 +60,10 @@ public class Todo extends BaseTimeEntity {
      */
     private Integer week;
 
-    @Builder
     public Todo(Calendar calendar, Category category, String name, String priority){
         this.calendar = calendar;
         this.category = category;
         this.name = name;
         this.priority = priority;
     }
-
 }
