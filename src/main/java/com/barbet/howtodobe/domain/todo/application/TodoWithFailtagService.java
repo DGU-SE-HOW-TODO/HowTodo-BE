@@ -7,6 +7,7 @@ import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
+import com.barbet.howtodobe.domain.todo.dto.TodoFailtagRequestDTO;
 import com.barbet.howtodobe.global.exception.CustomException;
 import com.barbet.howtodobe.global.util.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class TodoWithFailtagService {
         return selectedFailtagList;
     }
 
-    public void enrollTodoWithFailtag (Long todoId, String failTagName) {
+    public Boolean enrollTodoWithFailtag (Long todoId, TodoFailtagRequestDTO request) {
         Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
@@ -61,13 +62,16 @@ public class TodoWithFailtagService {
         // 일단 이번주 실패태그(5개) 잘 등록 되어 있는지 체크
         if (thisWeekFailtagList != null && !thisWeekFailtagList.isEmpty()) {
             // thisWeekFailtagList에 selectedFailTag 있는지 확인
-            if (!thisWeekFailtagList.contains(failTagName)) {
+            if (!thisWeekFailtagList.contains(request.getFailTagName())) {
                 throw new CustomException(INVALID_FAILTAG);
             } else {
-                todo.updateTodoWithFailtag(failTagName);
+                todo.updateTodoWithFailtag(request.getFailTagName());
             }
         } else {
             throw new CustomException(NOT_EXIST_WEEK_FAILTAG);
         }
+
+        // 미뤘는지 여부 반환
+        return request.getIsDelay();
     }
 }

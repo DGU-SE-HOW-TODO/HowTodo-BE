@@ -14,12 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/todo")
 @RequiredArgsConstructor
 public class TodoApi {
     private final TodoAssignService todoAssignService;
@@ -28,7 +26,7 @@ public class TodoApi {
     private final TodoCheckService todoCheckService;
     private final TodoWithFailtagService todoWithFailtagService;
 
-    @PostMapping(value = "/todo/assign", produces = "application/json")
+    @PostMapping(value = "/assign", produces = "application/json")
     public ResponseEntity<ApiStatus> assign(@RequestBody TodoAssignRequestDTO todoAssignRequestDTO){
         HttpHeaders httpHeaders = new HttpHeaders();
         try {
@@ -51,7 +49,7 @@ public class TodoApi {
         }
     }
 
-    @PostMapping(value = "/todo/fix", produces = "application/json")
+    @PostMapping(value = "/fix", produces = "application/json")
     public ResponseEntity<Message> fix(@RequestBody TodoFixRequestDTO todoFixRequestDTO) {
         HttpHeaders httpHeaders = new HttpHeaders();
         try {
@@ -79,7 +77,7 @@ public class TodoApi {
         }
     }
 
-    @PostMapping(value = "/todo/check", produces = "application/json")
+    @PostMapping(value = "/check", produces = "application/json")
     public ResponseEntity<Message> check(@RequestBody TodoCheckRequestDTO todoCheckRequestDTO) {
         HttpHeaders httpHeaders = new HttpHeaders();
         try {
@@ -107,10 +105,11 @@ public class TodoApi {
         }
     }
 
-    @PostMapping("/todo/failtag")
-    public ResponseEntity<Void> enrollTodoWithFailtag(@RequestParam Long todoId,
-                                                      @RequestParam String failtagName) {
-        todoWithFailtagService.enrollTodoWithFailtag(todoId, failtagName);
+    // 아니지 requestBody로 failtagName이랑 isDeley값 보내줘야함
+    @PostMapping("/failtag/{todoId}")
+    public ResponseEntity<Void> enrollTodoWithFailtag(@PathVariable Long todoId,
+                                                      @RequestBody TodoFailtagRequestDTO request) {
+        todoWithFailtagService.enrollTodoWithFailtag(todoId, request);
         return ResponseEntity.ok().build();
     }
 }
