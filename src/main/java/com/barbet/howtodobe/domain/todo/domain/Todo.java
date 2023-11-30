@@ -37,23 +37,26 @@ public class Todo extends BaseTimeEntity {
 
     @Column(name = "is_checked", nullable = true)
     @ColumnDefault("false")
-    private boolean isChecked;
+    private Boolean isChecked;
 
     @Column(name = "is_fixed", nullable = true)
     @ColumnDefault("false")
-    private boolean isFixed;
+    private Boolean isFixed;
 
     @Column(name = "is_delay", nullable = true)
     @ColumnDefault("false")
-    private boolean isDelay;
+    private Boolean isDelay;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id", nullable = false)
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="statistics_id", nullable = false)
-    private Statistic statistics;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="statistics_id", nullable = false)
+//    private Statistic statistics;
+
+    @Column(name = "is_checked", nullable = true)
+    private Long failtagId;
 
     /** 투두 주차만 따로 컬럼으로 설정
      * : 투두 관련 쿼리 메서드가 없음
@@ -65,5 +68,10 @@ public class Todo extends BaseTimeEntity {
         this.category = category;
         this.name = name;
         this.priority = priority;
+    }
+
+    // 실패태그 달고 업데이트
+    public void updateTodoWithFailtag (Long failtagId) {
+        this.failtagId = failtagId;
     }
 }
