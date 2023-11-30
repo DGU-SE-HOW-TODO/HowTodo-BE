@@ -14,15 +14,15 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     /** 통계용 */
     // 한 주에 해당하는 대분류 id 목록 반환 (중복 제거)
     @Query("SELECT DISTINCT c.categoryId FROM Category c " +
-            "JOIN FETCH c.member m " +
+            // "JOIN FETCH c.member m " +
             "WHERE YEAR(c.createdDate) = :year " +
             "AND MONTH(c.createdDate) = :month " +
             "AND c.week = :week")
     List<Long> findCategoryIdsByDate(@Param("year") Integer year,
-                                         @Param("month") Integer month,
-                                         @Param("week") Integer week);
+                                     @Param("month") Integer month,
+                                     @Param("week") Integer week);
 
     // 대분류 ID로 대분류명 찾기
-    String findCategoryNameById(Long categoryId);
+    String findCategoryNameByCategoryId(Long categoryId);
 
 }

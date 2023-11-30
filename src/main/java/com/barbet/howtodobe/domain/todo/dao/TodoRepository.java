@@ -59,7 +59,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     /** for Statistic & Home Info */
     @Query("SELECT t FROM Todo t " +
-            "JOIN FETCH t.member m " +
+            // "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week")
@@ -68,7 +68,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                  @Param("week") Integer week);
 
     @Query("SELECT t FROM Todo t " +
-            "JOIN FETCH t.member m " +
+            // "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -79,7 +79,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     // selectedDate에 해당하는 카테고리의 투두 정보
     @Query("SELECT t FROM Todo t " +
-            "JOIN FETCH t.member m " +
+            // "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -93,7 +93,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     /** for feekback */
     // 미룬 투두 정보
     @Query("SELECT t FROM Todo t " +
-            "JOIN FETCH t.member m " +
+            // "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -104,7 +104,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     // 우선 순위 관련
     @Query("SELECT COUNT(t) FROM Todo t " +
-            "JOIN t.member m " +
+            // "JOIN t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -115,7 +115,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                              @Param("priority") String priority);
 
     @Query("SELECT COUNT(t) FROM Todo t " +
-            "JOIN t.member m " +
+            // "JOIN t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
