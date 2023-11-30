@@ -48,19 +48,22 @@ public class HomeService {
         Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        LocalDate todayDate = LocalDate.now();
+        LocalDate todayDate = LocalDate.now(); // 현재 날짜
 
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         Integer year = selectedDate.getYear();
         Integer month = selectedDate.getMonthValue();
         Integer week = selectedDate.get(woy);
 
+        // 선택한 날짜에 대한 투두 리스트 불러옴
         List<Todo> homeTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
 
         Integer homeTodoCnt = homeTodoList.size();
         Integer homeTodoDoneCnt = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week).size();
+        // 오늘 할 일 70% 달성
         Integer rateOfSuccess = calculateCompletionRate(homeTodoCnt, homeTodoDoneCnt);
-
+        
+        // todoCategoryData >> todoData
         List<HomeResponseDTO.TodoCategoryData> todoCategoryDataList = new ArrayList<>();
         List<HomeResponseDTO.TodoCategoryData.TodoData> todoDataList = new ArrayList<>();
 
@@ -69,7 +72,8 @@ public class HomeService {
                 .collect(Collectors.groupingBy(Todo::getCategory))
                 .forEach(((category, todoList) -> {
                     Long categoryId = category.getCategoryId();
-
+                    
+                    // 카테고리 별로 묶어서 todoData 만듦
                     List<HomeResponseDTO.TodoCategoryData.TodoData> tempTodoDataList = todoList.stream()
                             .map(todo -> new HomeResponseDTO.TodoCategoryData.TodoData(
                                     todo.getTodoId(),
@@ -81,11 +85,14 @@ public class HomeService {
                                     todo.getFailtag()
                             ))
                             .collect(Collectors.toList());
-
-                    HomeResponseDTO.TodoCategoryData categoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList);
-                    todoCategoryDataList.add(categoryData);
-                    todoDataList.addAll(tempTodoDataList);
+                    
+                    // todoCategoryData -> [todoCategoryId, <todoData>]
+                    HomeResponseDTO.TodoCategoryData todocategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList);
+                    todoCategoryDataList.add(todocategoryData); // 만든거 계속 추가해
+                    todoDataList.addAll(tempTodoDataList); // todoData 완성본
                 });
+                
+        // 최종적으로 만들어진 데이터 뿌려주기        
         return new HomeResponseDTO(rateOfSuccess, todoCategoryDataList, todayDate, selectedDate, todoDataList);
     }
 }
