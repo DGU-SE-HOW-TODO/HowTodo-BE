@@ -27,11 +27,30 @@ public class HomeResponseDTO {
         public static class TodoData {
             private Long todoId;
             private String todoCategory;
-            private String todo;
+            private String todoName;
             private String priority;
             private Boolean isChecked;
             private Boolean isFixed;
-            private String failtag;
+            private Boolean isDelayed;
+            private Long failtagId;
+
+            public TodoData (Long todoId,
+                             String todoCategory,
+                             String todoName,
+                             String priority,
+                             Boolean isChecked,
+                             Boolean isFixed,
+                             Boolean isDelayed,
+                             Long failtagId) {
+                this.todoId = todoId;
+                this.todoCategory = todoCategory;
+                this.todoName = todoName;
+                this.priority = priority;
+                this.isChecked = isChecked;
+                this.isFixed = isFixed;
+                this.isDelayed = isDelayed;
+                this.failtagId = failtagId;
+            }
         }
     }
 
