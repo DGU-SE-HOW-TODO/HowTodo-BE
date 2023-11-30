@@ -14,7 +14,9 @@ public class TodoFixService {
     public boolean fixTodo(TodoFixRequestDTO todoFixRequestDTO){
         try {
             boolean newIsFixed = todoFixRequestDTO.isFixed();
+            System.out.println("IsFixed:" + newIsFixed);
             newIsFixed = !newIsFixed;
+            System.out.println("newIsFixed:" + newIsFixed);
 
             Todo _todo = todoRepository.findByTodoCategoryId(
                     todoFixRequestDTO.getTodoId(),
@@ -31,8 +33,10 @@ public class TodoFixService {
 
             _todo = todoRepository.findById(todoFixRequestDTO.getTodoId()).get();
 
+            System.out.println("updatedFixed:" + _todo.isFixed());
+
             if (_todo.getTodoId() > 0){
-                return _todo.isFixed();
+                return newIsFixed;
             }
             else {
                 throw new RuntimeException("해당하는 투두가 존재하지 않음.");
