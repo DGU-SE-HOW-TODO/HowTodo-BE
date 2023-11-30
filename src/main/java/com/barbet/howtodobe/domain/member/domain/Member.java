@@ -61,12 +61,13 @@ public class Member implements UserDetails {
         return true;
     }
 
-    public Member hashPassword(PasswordEncoder bCryptPasswordEncoder) {
-        this.password = bCryptPasswordEncoder.encode(this.password);
-        return this;
-    }
 
+    // 비밀번호 체크는 프론트가 한다고 한거 아녔남?
     public boolean checkPassword(String plainPw, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(plainPw, this.password);
+    }
+
+    public void encodePassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
     }
 }
