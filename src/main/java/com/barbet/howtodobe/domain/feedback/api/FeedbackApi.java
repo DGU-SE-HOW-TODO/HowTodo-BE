@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class FeedbackApi {
     private final FeedbackService feedbackService;
 
-    @GetMapping("/{selectedDate")
+    @GetMapping("/{selectedDate}")
     public ResponseEntity<FeedbackResponseDTO> getFeedback(
             @PathVariable("selectedDate") LocalDate selectedDate,
             HttpServletRequest httpServletRequest) {
