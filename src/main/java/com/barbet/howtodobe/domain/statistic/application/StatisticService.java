@@ -93,12 +93,12 @@ public class StatisticService {
         Integer week = selectedDate.get(woy);
 
         // 이번주 투두 리스트
-        List<Todo> nowTodoList = todoRepository.todoForStatistic(year, month, week);
-        List<Todo> nowTodoDoneList = todoRepository.todoForStatisticByIsCheckedTrue(year, month, week);
+        List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
+        List<Todo> nowTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
 
         // TODO 이번주가 1주차인 경우도 조건 추가
-        List<Todo> prevTodoList = todoRepository.todoForStatistic(year, month, week-1);
-        List<Todo> prveTodoDoneList = todoRepository.todoForStatisticByIsCheckedTrue(year, month, week-1);
+        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1);
+        List<Todo> prveTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week-1);
 
         Integer prevTodoCnt = prevTodoList.size();
         Integer prevTodoDoneCnt = prveTodoDoneList.size();
