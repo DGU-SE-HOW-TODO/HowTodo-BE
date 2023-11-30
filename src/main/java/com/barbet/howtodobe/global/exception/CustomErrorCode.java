@@ -13,13 +13,14 @@ public enum CustomErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 1001, "서버 내부에 오류가 있습니다."),
 
     // Member (2xxx)
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, 2001, "사용자를 찾을 수 없습니다.");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, 2001, "사용자를 찾을 수 없습니다."),
 
     // Category (3xxx)
 
     // To Do (4xxx)
 
     // Failtag (5xxx)
+    FAILTAG_COUNT_IS_NOT_FIVE(HttpStatus.BAD_REQUEST, 5001, "선택된 실패태그는 5개이여야 합니다.");
 
     // Statistics / Feedback (6xxx)
 
