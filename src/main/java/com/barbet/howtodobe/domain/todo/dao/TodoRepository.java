@@ -57,25 +57,23 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
 
 
-    /** for STATISTIC */
-    // 투두 달성률 (전체)
+    /** for Statistic & Home Info */
     @Query("SELECT t FROM Todo t " +
             "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week")
-    List<Todo> todoForStatistic (@Param("year") Integer year,
+    List<Todo> findTodoBySelectedDate (@Param("year") Integer year,
                                  @Param("month") Integer month,
                                  @Param("week") Integer week);
 
-    // 투두 달성률 (달성한 것)
     @Query("SELECT t FROM Todo t " +
             "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
             "AND t.isChecked = true ")
-    List<Todo> todoForStatisticByIsCheckedTrue (@Param("year") Integer year,
+    List<Todo> findTodoBySelectedDateAndIsChecked (@Param("year") Integer year,
                                                 @Param("month") Integer month,
                                                 @Param("week") Integer week);
 
@@ -92,7 +90,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                      @Param("categoryId") Long categoryId);
 
 
-    /** for FEEDBACK */
+    /** for feekback */
     // 미룬 투두 정보
     @Query("SELECT t FROM Todo t " +
             "JOIN FETCH t.member m " +
@@ -111,7 +109,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
             "AND t.priority = :priority")
-    Long countTodoByPriority(@Param("year") Integer year,
+    Integer countTodoByPriority(@Param("year") Integer year,
                              @Param("month") Integer month,
                              @Param("week") Integer week,
                              @Param("priority") String priority);
@@ -123,7 +121,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             "AND t.week = :week " +
             "AND t.priority = :priority " +
             "AND t.isChecked = true")
-    Long countTodoByPriorityAndIsChecked(@Param("year") Integer year,
+    Integer countTodoByPriorityAndIsChecked(@Param("year") Integer year,
                                          @Param("month") Integer month,
                                          @Param("week") Integer week,
                                          @Param("priority") String priority);
