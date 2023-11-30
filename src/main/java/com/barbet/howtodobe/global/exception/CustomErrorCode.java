@@ -14,6 +14,7 @@ public enum CustomErrorCode {
 
     // Member (2xxx)
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, 2001, "사용자를 찾을 수 없습니다."),
+    EMAIL_ALREADY_EXIST(HttpStatus.NOT_FOUND, 2002, "이미 존재하는 이메일입니다."),
 
     // Category (3xxx)
 
