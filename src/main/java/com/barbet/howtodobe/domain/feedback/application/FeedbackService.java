@@ -36,7 +36,7 @@ public class FeedbackService {
     private final TodoRepository todoRepository;
     private final CategoryRepository categoryRepository;
 
-    private Integer calculateCompletionRate(Long todoCount, Long todoDoneCount) {
+    private Integer calculateCompletionRate(Integer todoCount, Integer todoDoneCount) {
         if (todoCount == null || todoCount == 0) {
             return 0;
         }
@@ -103,16 +103,16 @@ public class FeedbackService {
 
 
         /** 달성률 피드백 */
-        List<Todo> nowTodoList = todoRepository.todoForStatistic(year, month, week);
+        List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
         Integer nowTodoCnt = nowTodoList.size(); // 이번주 전체 투두
-        List<Todo> nowTodoDoneList = todoRepository.todoForStatisticByIsCheckedTrue(year, month, week);
+        List<Todo> nowTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
         Integer nowTodoDoneCnt = nowTodoDoneList.size(); // 이번주 달성한 투두
 
 
         // TODO 저번주 처리 정확하게 해줘야하는데 일단 임시로 week-1로 함
-        List<Todo> prevTodoList = todoRepository.todoForStatistic(year, month, week-1);
+        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1);
         Integer prevTodoCnt = prevTodoList.size(); // 저번주 전체 투두
-        List<Todo> prevTodoDoneList = todoRepository.todoForStatisticByIsCheckedTrue(year, month, week);
+        List<Todo> prevTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
         Integer prevTodoDoneCnt = prevTodoDoneList.size(); // 저번주 달성한 투두
 
 
@@ -140,12 +140,12 @@ public class FeedbackService {
         String priorityMessage;
         String priorityDetailMessage;
 
-        Long veryImportantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "매우 중요");
-        Long veryImportantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "매우 중요");
-        Long importantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "중요");
-        Long importantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "중요");
-        Long notImportantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "중요하지 않음");
-        Long notImportantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "중요하지 않음");
+        Integer veryImportantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "매우 중요");
+        Integer veryImportantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "매우 중요");
+        Integer importantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "중요");
+        Integer importantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "중요");
+        Integer notImportantTodoCnt = todoRepository.countTodoByPriority(year, month, week, "중요하지 않음");
+        Integer notImportantTodoDoneCnt = todoRepository.countTodoByPriorityAndIsChecked(year, month, week, "중요하지 않음");
 
         Integer veryImportantTodoPercent = calculateCompletionRate(veryImportantTodoCnt, veryImportantTodoDoneCnt);
         Integer importantTodoPercent = calculateCompletionRate(importantTodoCnt, importantTodoDoneCnt);
