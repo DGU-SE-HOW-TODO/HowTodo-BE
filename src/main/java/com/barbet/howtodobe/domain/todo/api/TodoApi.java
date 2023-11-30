@@ -4,6 +4,7 @@ import com.barbet.howtodobe.domain.calendar.application.UpdateSuccessRateService
 import com.barbet.howtodobe.domain.todo.application.TodoAssignService;
 import com.barbet.howtodobe.domain.todo.application.TodoCheckService;
 import com.barbet.howtodobe.domain.todo.application.TodoFixService;
+import com.barbet.howtodobe.domain.todo.application.TodoWithFailtagService;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.domain.todo.dto.*;
 import com.barbet.howtodobe.global.common.response.ApiStatus;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,6 +26,7 @@ public class TodoApi {
     private final UpdateSuccessRateService updateSuccessRateService;
     private final TodoFixService todoFixService;
     private final TodoCheckService todoCheckService;
+    private final TodoWithFailtagService todoWithFailtagService;
 
     @PostMapping(value = "/todo/assign", produces = "application/json")
     public ResponseEntity<ApiStatus> assign(@RequestBody TodoAssignRequestDTO todoAssignRequestDTO){
@@ -102,5 +105,12 @@ public class TodoApi {
                     new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, e.getMessage()),
                     httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/todo/failtag")
+    public ResponseEntity<Void> enrollTodoWithFailtag(@RequestParam Long todoId,
+                                                      @RequestParam Long failtagId) {
+        todoWithFailtagService.enrollTodoWithFailtag(todoId, failtagId);
+        return ResponseEntity.ok().build();
     }
 }
