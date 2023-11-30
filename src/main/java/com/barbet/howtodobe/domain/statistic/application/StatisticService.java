@@ -1,10 +1,13 @@
 package com.barbet.howtodobe.domain.statistic.application;
 
 import com.barbet.howtodobe.domain.category.dao.CategoryRepository;
+import com.barbet.howtodobe.domain.failtag.dao.FailtagRepository;
+import com.barbet.howtodobe.domain.failtag.domain.Failtag;
 import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.nowCategory.dao.NowCategoryRepository;
 import com.barbet.howtodobe.domain.nowCategory.domain.NowCategory;
+import com.barbet.howtodobe.domain.nowFailtag.dao.NowFailtagRepository;
 import com.barbet.howtodobe.domain.nowFailtag.domain.NowFailtag;
 import com.barbet.howtodobe.domain.statistic.dto.StatisticResponseDTO;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
@@ -34,6 +37,8 @@ public class StatisticService {
     private final TodoRepository todoRepository;
     private final CategoryRepository categoryRepository;
     private final NowCategoryRepository nowCategoryRepository;
+    private final NowFailtagRepository nowFailtagRepository;
+    private final FailtagRepository failtagRepository;
 
     /** 대분류 통계 정보 */
     private List<NowCategory> getWeekCategory(List<Long> categoryIdList, LocalDate selectedDate) {
@@ -54,7 +59,7 @@ public class StatisticService {
             Integer categoryTodoCnt = todoByCategory.size();
 
             // 3. 해당 Category Id에 대한 투두 중, 달성 완료한 개수
-            Integer categoryTodoDoneCnt = Math.toIntExact(todoByCategory.stream().filter(Todo::isChecked).count());
+            Integer categoryTodoDoneCnt = Math.toIntExact(todoByCategory.stream().filter(Todo::getIsChecked).count());
 
             String nowCategory = categoryRepository.findCategoryNameById(categortId);
             Integer nowCategoryRate = categoryTodoCnt > 0 ? Integer.valueOf ((int) (categoryTodoDoneCnt * 100.0) / categoryTodoCnt) : null;
@@ -76,9 +81,29 @@ public class StatisticService {
     }
 
     /** 실패태그 통계 정보 */
-    private List<NowFailtag> getWeekFailtag(List<Long> )
+    // 매개변수 todoList: selectedDate에 해당하는 투두이면서 FailtagId값이 null인 투두 리스트
+    private List<NowFailtag> getWeekFailtagList(List<Todo> todoList) {
 
+        // key : failtagId, value: 각 failtagId별 투두 개수
+        Map<Long, Long> weekFailtagList = todoList.stream()
+                .filter(todo -> todo.getFailtagId() != null)
+                .collect(Collectors.groupingBy(Todo::getFailtagId, Collectors.counting()));
 
+        Integer totalTodoWithFailTagCnt = todoList.size();
+
+        return weekFailtagList.entrySet().stream()
+                .map(entry -> {
+                    Long failtagId = entry.getKey();
+                    String nowFailtag = failtagRepository.findNameByFailtagId(failtagId);
+                    Integer nowFailtagRate = (int) ((entry.getValue() / totalTodoWithFailTagCnt) * 100);
+
+                    return NowFailtag.builder()
+                            .nowFailtag(nowFailtag)
+                            .nowFailtagRate(nowFailtagRate)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
 
     /** selectedDate에 따른 통계 값 전체 */
     public StatisticResponseDTO getStatistic (LocalDate selectedDate, HttpServletRequest request) {
@@ -114,18 +139,25 @@ public class StatisticService {
 
         /** 대분류 관련 */
         List<Long> nowCategoryIdList = categoryRepository.findCategoryIdsByDate(year, month, week);
-        List<NowCategory> nowCategoryDate = getWeekCategory(nowCategoryIdList, selectedDate);
+        List<NowCategory> nowCategoryData = getWeekCategory(nowCategoryIdList, selectedDate);
 
         String nowBestCateogry = null;
-        if (!nowCategoryDate.isEmpty()) {
-            NowCategory nowCategory = nowCategoryDate.get(0);
+        if (!nowCategoryData.isEmpty()) {
+            NowCategory nowCategory = nowCategoryData.get(0);
             nowBestCateogry = nowCategory.getNowCategory();
         }
 
         /** 실패 태그 관련 */
+        List<Todo> todoList = todoRepository.findTodoBySelectedDate(year, month, week);
+        List<NowFailtag> nowFailtagData = getWeekFailtagList(todoList);
 
+        String nowWorstFailTag = null;
+        if (!nowFailtagData.isEmpty()) {
+            nowFailtagData = nowFailtagRepository.findAllByOrderByNowFailtagRateAsc();
+            NowFailtag nowFailtag = nowFailtagData.get(0);
+            nowWorstFailTag = nowFailtag.getNowFailtag();
+        }
 
-
-        return new StatisticResponseDTO(prevTodoCnt, prevTodoDoneCnt, nowTodoCnt, nowTodoDoneCnt, rateOfChange, nowCategoryDate, nowBestCateogry, );
+        return new StatisticResponseDTO(prevTodoCnt, prevTodoDoneCnt, nowTodoCnt, nowTodoDoneCnt, rateOfChange, nowCategoryData, nowBestCateogry, nowFailtagData, nowWorstFailTag);
     }
 }
