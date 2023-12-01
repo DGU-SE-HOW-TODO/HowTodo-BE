@@ -77,36 +77,42 @@ public class TodoApi {
         }
     }
 
-    @PostMapping(value = "/check", produces = "application/json")
-    public ResponseEntity<Message> check(@RequestBody TodoCheckRequestDTO todoCheckRequestDTO) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        try {
-            boolean newIsChecked = todoCheckService.checkTodo(todoCheckRequestDTO);
-            String responseMessage;
-            if (newIsChecked){
-                responseMessage = "투두 체크 완료";
-            }
-            else {
-                responseMessage = "투두 체크 해제 완료";
-            }
+//    @PostMapping(value = "/check", produces = "application/json")
+//    public ResponseEntity<Message> check(@RequestBody TodoCheckRequestDTO todoCheckRequestDTO) {
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        try {
+//            boolean newIsChecked = todoCheckService.checkTodo(todoCheckRequestDTO);
+//            String responseMessage;
+//            if (newIsChecked){
+//                responseMessage = "투두 체크 완료";
+//            }
+//            else {
+//                responseMessage = "투두 체크 해제 완료";
+//            }
+//
+//            TodoCheckResponseDTO todoCheckResponse = new TodoCheckResponseDTO(newIsChecked);
+//
+//            return new ResponseEntity(
+//                    new Message(
+//                            new ApiStatus(HowTodoStatus.OK, responseMessage),
+//                            todoCheckResponse),
+//                    httpHeaders, HttpStatus.OK);
+//
+//        }catch (RuntimeException e) {
+//            return new ResponseEntity(
+//                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, e.getMessage()),
+//                    httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
-            TodoCheckResponseDTO todoCheckResponse = new TodoCheckResponseDTO(newIsChecked);
-
-            return new ResponseEntity(
-                    new Message(
-                            new ApiStatus(HowTodoStatus.OK, responseMessage),
-                            todoCheckResponse),
-                    httpHeaders, HttpStatus.OK);
-
-        }catch (RuntimeException e) {
-            return new ResponseEntity(
-                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, e.getMessage()),
-                    httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @PatchMapping("/check/{todoId}")
+    public ResponseEntity<Void> updateTodoChecked(@PathVariable Long todoId) {
+        todoCheckService.updateTodoChecked(todoId);
+        return ResponseEntity.ok().build();
     }
 
-    // 아니지 requestBody로 failtagName이랑 isDeley값 보내줘야함
-    @PostMapping("/failtag/{todoId}")
+    // 실패태그와 isDelay값만 변경됨
+    @PatchMapping("/failtag/{todoId}")
     public ResponseEntity<Void> enrollTodoWithFailtag(@PathVariable Long todoId,
                                                       @RequestBody TodoFailtagRequestDTO request) {
         todoWithFailtagService.enrollTodoWithFailtag(todoId, request);
