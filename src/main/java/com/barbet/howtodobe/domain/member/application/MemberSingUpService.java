@@ -23,7 +23,7 @@ public class MemberSingUpService {
     private final MemberEmailDuplicateService memberEmailDuplicateService;
 
     public Long singUp (SignUpRequestDTO request) {
-        if (!memberEmailDuplicateService.EmailDuplicateCheck(request.getEmail())) {
+        if (memberEmailDuplicateService.EmailDuplicateCheck(request.getEmail())) {
             throw  new CustomException(EMAIL_ALREADY_EXIST);
         }
 
