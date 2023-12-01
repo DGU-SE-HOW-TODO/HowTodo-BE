@@ -1,12 +1,10 @@
 package com.barbet.howtodobe.domain.member.dto;
 
 import com.barbet.howtodobe.domain.member.domain.Member;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignUpRequestDTO {
 
