@@ -51,10 +51,6 @@ public class Todo extends BaseTimeEntity {
     @JoinColumn(name="member_id", nullable = false)
     private Member member;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="statistics_id", nullable = false)
-//    private Statistic statistics;
-
     @Column(nullable = true)
     private String failtagName;
 
@@ -63,15 +59,25 @@ public class Todo extends BaseTimeEntity {
      */
     private Integer week;
 
-    public Todo(Calendar calendar, Category category, String name, String priority){
+    public Todo(Calendar calendar, Member member, Category category, String name, String priority){
         this.calendar = calendar;
+        this.member = member;
         this.category = category;
         this.name = name;
         this.priority = priority;
     }
 
     // 실패태그 달고 업데이트
-    public void updateTodoWithFailtag (String failtagName) {
+    public void updateTodoWithFailtag (String failtagName,
+                                       Boolean isDelay,
+                                       Boolean isChecked) {
         this.failtagName = failtagName;
+        this.isDelay = isDelay;
+        this.isChecked = isChecked;
+    }
+
+    // 투두 체크 용
+    public void updateTodoChecked (Boolean isChecked) {
+        this.isChecked = isChecked;
     }
 }
