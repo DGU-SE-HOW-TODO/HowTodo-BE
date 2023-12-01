@@ -83,7 +83,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
-            "AND t.category = :categoryId")
+            "AND t.category.categoryId = :categoryId")
     List<Todo> categoryForStatistic (@Param("year") Integer year,
                                      @Param("month") Integer month,
                                      @Param("week") Integer week,
