@@ -13,7 +13,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     /** 통계용 */
     // 한 주에 해당하는 대분류 id 목록 반환 (중복 제거)
-    @Query("SELECT DISTINCT c.categoryId FROM Category c " +
+    @Query("SELECT c.categoryId FROM Category c " +
             // "JOIN FETCH c.member m " +
             "WHERE YEAR(c.createdDate) = :year " +
             "AND MONTH(c.createdDate) = :month " +
