@@ -1,5 +1,6 @@
 package com.barbet.howtodobe.domain.statistic.api;
 
+import com.barbet.howtodobe.domain.feedback.dto.FeedbackResponseDTO;
 import com.barbet.howtodobe.domain.statistic.application.StatisticService;
 import com.barbet.howtodobe.domain.statistic.dto.StatisticResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,17 +23,15 @@ import java.time.LocalDate;
 public class StatisticApi {
 
     private final StatisticService statisticService;
-//    @GetMapping("/{selectedDate}")
-//    public ResponseEntity<StatisticResponseDTO> getStatistics (@PathVariable("selectedDate")LocalDate selectedDate,
-//                                                               HttpServletRequest httpServletRequest) {
-//        return ResponseEntity.ok().body(statisticService.getStatistic(selectedDate, httpServletRequest));
-//    }
 
-    @GetMapping(value = "/{selectedDate}", produces = "application/json")
+    @GetMapping("/{selectedDate}")
     public ResponseEntity<StatisticResponseDTO> getStatistics(
-            @PathVariable("selectedDate")
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate,
+            @PathVariable("selectedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate,
             HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(statisticService.getStatistic(selectedDate, httpServletRequest));
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        Integer year = selectedDate.getYear();
+        Integer month = selectedDate.getMonthValue();
+        Integer week = selectedDate.get(woy);
+        return ResponseEntity.ok().body(statisticService.getStatistic(year, month, week, httpServletRequest));
     }
 }
