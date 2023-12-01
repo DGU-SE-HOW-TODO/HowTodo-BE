@@ -7,5 +7,5 @@ public class TodoFixRequestDTO {
     String selectedDate;
     Long todoCategoryId;
     Long todoId;
-    boolean isFixed;
+    Boolean isFixed;
 }

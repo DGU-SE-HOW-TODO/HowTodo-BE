@@ -7,5 +7,5 @@ public class TodoCheckRequestDTO {
     String selectedDate;
     Long todoCategoryId;
     Long todoId;
-    boolean isChecked;
+    Boolean isChecked;
 }
