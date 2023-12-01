@@ -27,6 +27,9 @@ public class Category extends BaseTimeEntity {
     private String name;
 
     @Column(nullable = false)
+    private Integer year;
+
+    @Column(nullable = false)
     private Integer week;
 
     @Column(nullable = false)
