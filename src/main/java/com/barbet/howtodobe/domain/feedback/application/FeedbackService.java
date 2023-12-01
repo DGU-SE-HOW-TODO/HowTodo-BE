@@ -92,34 +92,24 @@ public class FeedbackService {
     }
 
     /** 피드백 조회 */
-    public FeedbackResponseDTO getFeedback (LocalDate selectedDate, HttpServletRequest request) {
+    public FeedbackResponseDTO getFeedback (Integer year, Integer month, Integer week, HttpServletRequest request) {
 //        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
 //                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        Integer year = selectedDate.getYear();
-        Integer month = selectedDate.getMonthValue();
-        Integer week = selectedDate.get(woy);
-
 
         /** 달성률 피드백 */
         List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
         Integer nowTodoCnt = nowTodoList.size(); // 이번주 전체 투두
         List<Todo> nowTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
         Integer nowTodoDoneCnt = nowTodoDoneList.size(); // 이번주 달성한 투두
-
-
-        // TODO 저번주 처리 정확하게 해줘야하는데 일단 임시로 week-1로 함
         List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1);
         Integer prevTodoCnt = prevTodoList.size(); // 저번주 전체 투두
         List<Todo> prevTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
         Integer prevTodoDoneCnt = prevTodoDoneList.size(); // 저번주 달성한 투두
 
-
         Double prevTodoRate = (prevTodoCnt == 0) ? 0.0 : ((double) prevTodoDoneCnt / prevTodoCnt) * 100.0;
         Double nowTodoRate = (nowTodoCnt == 0) ? 0.0 : ((double) nowTodoDoneCnt / nowTodoCnt) * 100.0;
 
-        Integer rateOfChange = (prevTodoRate == null || nowTodoRate == null) ? null : nowTodoRate.intValue() - prevTodoRate.intValue();
+        Integer rateOfChange = calculateRateOfChange(prevTodoRate, nowTodoRate);
 
         String rateMessage;
         String rateDetailMessage;
@@ -164,7 +154,7 @@ public class FeedbackService {
         List<Todo> isDelayTodoList = todoRepository.todoForFeedbackByIsDelayTrue(year, month, week);
 
         Integer delayTodoCnt = isDelayTodoList.size();
-        String mostDelayCategory = categoryRepository.findCategoryNameByCategoryId(getMostDelayCategoryId(isDelayTodoList));
+        String mostDelayCategory = categoryRepository.findCategoryByCategoryId(getMostDelayCategoryId(isDelayTodoList)).getName();
 
         // delayTodoCnt에 따라 보여주는 메시지 값 설정하기
         String delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
