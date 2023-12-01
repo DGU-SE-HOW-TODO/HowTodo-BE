@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.util.List;
 
-@Getter
+
 public class HomeResponseDTO {
 
     private Integer rateOfSuccess;
@@ -15,15 +15,17 @@ public class HomeResponseDTO {
     private LocalDate todayDate;
     private LocalDate selectedDate;
 
+    @Getter
     public static class TodoCategoryData {
         private Long todoCategoryId;
         private List<TodoData> todoData;
+
 
         public TodoCategoryData (Long categoryId, List<TodoData> todoDataList) {
             this.todoCategoryId = categoryId;
             this.todoData = todoDataList;
         }
-
+        @Getter
         public static class TodoData {
             private Long todoId;
             private String todoCategory;

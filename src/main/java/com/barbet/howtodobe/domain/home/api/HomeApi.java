@@ -7,10 +7,7 @@ import com.barbet.howtodobe.domain.statistic.dto.StatisticResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -21,8 +18,8 @@ import java.time.LocalDate;
 public class HomeApi {
 
     private final HomeService homeService;
-
-    @GetMapping("/home/{selectedDate}")
+    @ResponseBody
+    @GetMapping(value = "/{selectedDate}", produces = "application/json")
     public ResponseEntity<HomeResponseDTO> getHomeInfo(
             @PathVariable(value = "selectedDate", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate,
@@ -34,6 +31,4 @@ public class HomeApi {
         }
         return ResponseEntity.ok().body(homeService.getHomeInfo(selectedDate, httpServletRequest));
     }
-
-
 }

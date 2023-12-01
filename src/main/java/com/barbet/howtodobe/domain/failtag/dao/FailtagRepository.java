@@ -19,4 +19,5 @@ public interface FailtagRepository extends JpaRepository<Failtag, Long> {
     List<Failtag> findFailtagsBySelectedDate (@Param("year") Integer year,
                                              @Param("month") Integer month,
                                              @Param("week") Integer week);
+
 }
