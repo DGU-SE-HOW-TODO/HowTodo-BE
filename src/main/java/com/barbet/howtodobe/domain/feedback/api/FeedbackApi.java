@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +26,10 @@ public class FeedbackApi {
     public ResponseEntity<FeedbackResponseDTO> getFeedback(
             @PathVariable("selectedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate,
             HttpServletRequest httpServletRequest) {
-        return ResponseEntity.ok().body(feedbackService.getFeedback(selectedDate, httpServletRequest));
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        Integer year = selectedDate.getYear();
+        Integer month = selectedDate.getMonthValue();
+        Integer week = selectedDate.get(woy);
+        return ResponseEntity.ok().body(feedbackService.getFeedback(year, month, week, httpServletRequest));
     }
 }
