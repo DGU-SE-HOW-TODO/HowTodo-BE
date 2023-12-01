@@ -53,7 +53,7 @@ public class TodoCheckService {
 
         // TODO 임시 멤버
         // Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
-
+  
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new CustomException(TODO_NOT_FOUND));
 
@@ -63,9 +63,6 @@ public class TodoCheckService {
             // 대신 실패태그 등록 안한 것만 가능
             if (isChecked == null) {
                 isChecked = true;
-            } else {
-                isChecked = !isChecked;
-            }
         } else {
             throw new CustomException(CAN_NOT_TODO_CHECK);
         }
