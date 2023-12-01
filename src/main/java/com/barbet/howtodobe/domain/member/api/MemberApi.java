@@ -24,17 +24,18 @@ public class MemberApi {
     private final MemberSignInService memberSignInService;
     private final TokenProvider tokenProvider;
 
-    private MemberSingUpService singUpService;
+    private final MemberSingUpService singUpService;
 
     @PostMapping("/login")
-    public ResponseEntity<SignInResponseDTO> authorize(@RequestBody SignInRequestDTO signInRequestDTO){
+    public ResponseEntity<String> authorize(@RequestBody SignInRequestDTO signInRequestDTO){
         Member _member = memberSignInService.signIn(signInRequestDTO);
         String accessToken = tokenProvider.createToken(_member, 8640000);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", "Bearer " + accessToken);
         SignInResponseDTO signInResponseDTO = new SignInResponseDTO("정상적으로 로그인 되었습니다.");
 
-        return new ResponseEntity(signInResponseDTO, httpHeaders, HttpStatus.OK);
+        return ResponseEntity.ok().body(accessToken);
+        //return new ResponseEntity(signInResponseDTO, httpHeaders, HttpStatus.OK);
     }
 
     @PostMapping("/signup")
