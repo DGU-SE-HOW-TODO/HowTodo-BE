@@ -51,10 +51,8 @@ public class HomeService {
 
         Integer homeTodoCnt = homeTodoList.size();
         Integer homeTodoDoneCnt = todoRepository.findHomeTodoBySelectedDateAndIsChecked(selectedDate).size();
-        // 오늘 할 일 70% 달성
         Integer rateOfSuccess = calculateCompletionRate(homeTodoCnt, homeTodoDoneCnt);
         
-        // todoCategoryData >> todoData
         List<HomeResponseDTO.TodoCategoryData> todoCategoryDataList = new ArrayList<>();
         List<HomeResponseDTO.TodoCategoryData.TodoData> todoDataList = new ArrayList<>();
 
@@ -64,7 +62,6 @@ public class HomeService {
                 .forEach(((category, todoList) -> {
                     Long categoryId = category.getCategoryId();
                     
-                    // 카테고리 별로 묶어서 todoData 만듦
                     List<HomeResponseDTO.TodoCategoryData.TodoData> tempTodoDataList = todoList.stream()
                             .map(todo -> new HomeResponseDTO.TodoCategoryData.TodoData(
                                     todo.getTodoId(),
@@ -80,10 +77,10 @@ public class HomeService {
                     
                     // todoCategoryData -> [todoCategoryId, <todoData>]
                     HomeResponseDTO.TodoCategoryData todocategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList);
-                    todoCategoryDataList.add(todocategoryData); // 만든거 계속 추가해
-                    todoDataList.addAll(tempTodoDataList); // todoData 완성본
+                    todoCategoryDataList.add(todocategoryData);
+                    todoDataList.addAll(tempTodoDataList);
                 }));
-        // 최종적으로 만들어진 데이터 뿌려주기        
+
         return new HomeResponseDTO(rateOfSuccess, todoCategoryDataList, todayDate, selectedDate, todoDataList);
     }
 }

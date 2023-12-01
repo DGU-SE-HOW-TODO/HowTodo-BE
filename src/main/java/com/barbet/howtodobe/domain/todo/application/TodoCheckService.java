@@ -64,7 +64,7 @@ public class TodoCheckService {
             if (isChecked == null) {
                 isChecked = true;
             } else {
-                isChecked = !isChecked; // 체크 상태를 반전시킴
+                isChecked = !isChecked;
             }
         } else {
             throw new CustomException(CAN_NOT_TODO_CHECK);

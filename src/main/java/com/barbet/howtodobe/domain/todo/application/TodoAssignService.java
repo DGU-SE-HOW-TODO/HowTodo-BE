@@ -50,10 +50,6 @@ public class TodoAssignService {
         } else {
             throw new RuntimeException("투두 등록 실패: _todo.getTodoId()가 0보다 작거나 같습니다.");
         }
-
-//        } catch (RuntimeException e) {
-//            throw new RuntimeException("투두 등록 실패: " + e.getMessage(), e);
-//        }
     }
 
 }

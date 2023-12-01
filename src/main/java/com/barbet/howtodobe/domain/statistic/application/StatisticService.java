@@ -33,7 +33,6 @@ public class StatisticService {
     private final NowFailtagRepository nowFailtagRepository;
 
     /** 대분류 통계 정보 */
-    // categoryIdList : 한주에 해당하는 대분류 목록
     private List<NowCategory> getWeekCategory(List<Todo> todoList) {
         Map<Category, Long> weekCategoryList = todoList.stream()
                 .filter(todo -> todo.getCategory().getCategoryId() != null)
@@ -56,7 +55,6 @@ public class StatisticService {
     }
 
     /** 실패태그 통계 정보 */
-    // 매개변수 todoList: selectedDate에 해당하는 투두이면서 FailtagId값이 null인 투두 리스트
     private List<NowFailtag> getWeekFailtagList(List<Todo> todoList) {
         Map<String, Long> weekFailtagList = todoList.stream()
                 .filter(todo -> todo.getFailtagName() != null)
@@ -107,7 +105,7 @@ public class StatisticService {
         Integer prevTodoDoneCnt = prveTodoDoneList.size();
 
         Integer rateOfChange;
-        if (prevTodoCnt != 0) { // 저번주차가 존재하는 경우
+        if (prevTodoCnt != 0) {
             Double prevTodoRate = (prevTodoCnt == 0) ? 0.0 : ((double) prevTodoDoneCnt / prevTodoCnt) * 100.0;
             Double nowTodoRate = (nowTodoCnt == 0) ? 0.0 : ((double) nowTodoDoneCnt / nowTodoCnt) * 100.0;
 
@@ -116,8 +114,7 @@ public class StatisticService {
             rateOfChange = 0;
         }
 
-        /** 대분류 관련 */
-        // 한 주에 해당하는 대분류 목록
+        /** 대분류 통계 */
         List<Todo> todoListForCategory = todoRepository.findTodoBySelectedDate(year, month, week);
         List<NowCategory> nowCategoryData = getWeekCategory(todoListForCategory);
         String nowBestCateogry = null;
@@ -128,7 +125,7 @@ public class StatisticService {
             nowBestCateogry = nowCategoryData.get(0).getNowCategory();
         }
 
-        /** 실패 태그 관련 */
+        /** 실패태그 통계 */
         List<Todo> todoListForFailtag = todoRepository.findTodoBySelectedDate(year, month, week);
         List<NowFailtag> nowFailTagData = getWeekFailtagList(todoListForFailtag);
 

@@ -10,7 +10,4 @@ import java.util.List;
 
 @Repository
 public interface NowCategoryRepository extends JpaRepository<NowCategory, Long> {
-
-    // nowCategoryRate 내림차순 정렬
-    List<NowCategory> findAllByOrderByNowCategoryRateDesc();
 }

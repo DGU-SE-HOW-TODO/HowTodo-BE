@@ -67,7 +67,6 @@ public class Todo extends BaseTimeEntity {
         this.priority = priority;
     }
 
-    // 실패태그 달고 업데이트
     public void updateTodoWithFailtag (String failtagName,
                                        Boolean isDelay,
                                        Boolean isChecked) {
@@ -76,7 +75,6 @@ public class Todo extends BaseTimeEntity {
         this.isChecked = isChecked;
     }
 
-    // 투두 체크 용
     public void updateTodoChecked (Boolean isChecked) {
         this.isChecked = isChecked;
     }

@@ -17,8 +17,6 @@ public enum CustomErrorCode {
     EMAIL_ALREADY_EXIST(HttpStatus.NOT_FOUND, 2002, "이미 존재하는 이메일입니다."),
     NOT_EXIST_PASSWORD(HttpStatus.NOT_FOUND, 2003, "비밀번호가 입력되지 않았습니다"),
 
-
-
     // Category (3xxx)
 
     // To Do (4xxx)
@@ -32,7 +30,6 @@ public enum CustomErrorCode {
 
     // Statistics (6xxx)
     NOT_EXIST_STATISTICS_INFO(HttpStatus.NOT_FOUND, 6001, "이번주에 통계 정보가 없습니다.");
-
 
     // Feedback (7xxx)
 

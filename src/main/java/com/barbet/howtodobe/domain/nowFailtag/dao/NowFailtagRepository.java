@@ -10,7 +10,4 @@ import java.util.List;
 
 @Repository
 public interface NowFailtagRepository extends JpaRepository<NowFailtag, Long> {
-
-    // nowFailtagRate 오름차순 정렬
-    List<NowFailtag> findAllByOrderByNowFailtagRateAsc();
 }

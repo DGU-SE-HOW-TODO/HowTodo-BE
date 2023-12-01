@@ -88,8 +88,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     List<Todo> findTodoBySelectedDateAndIsChecked (@Param("year") Integer year,
                                                 @Param("month") Integer month,
                                                 @Param("week") Integer week);
-
-    // selectedDate에 해당하는 카테고리의 투두 정보
     @Query("SELECT t FROM Todo t " +
             // "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
@@ -103,7 +101,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
 
     /** for feekback */
-    // 미룬 투두 정보
     @Query("SELECT t FROM Todo t " +
             // "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
@@ -114,7 +111,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                              @Param("month") Integer month,
                                              @Param("week") Integer week);
 
-    // 우선 순위 관련
     @Query("SELECT COUNT(t) FROM Todo t " +
             // "JOIN t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
