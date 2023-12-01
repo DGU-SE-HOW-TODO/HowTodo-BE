@@ -43,11 +43,13 @@ public class Failtag extends BaseTimeEntity {
                    Integer year,
                    Integer month,
                    Integer week,
+                   String name,
                    List<String> selectedFailtagList) {
         this.member = member;
         this.year = year;
         this.month = month;
         this.week = week;
+        this.name = name;
         this.selectedFailtagList = selectedFailtagList;
     }
 }
