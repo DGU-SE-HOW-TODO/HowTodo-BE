@@ -10,6 +10,7 @@ import java.time.LocalDate;
 public class CategoryRequestDTO {
 
     private String name;
+    private Integer year;
     private Integer month;
     private Integer week;
 
@@ -17,6 +18,7 @@ public class CategoryRequestDTO {
         return Category.builder()
                 .member(member)
                 .name(name)
+                .year(year)
                 .month(month)
                 .week(week)
                 .build();
