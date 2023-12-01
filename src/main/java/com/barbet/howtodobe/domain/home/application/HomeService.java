@@ -46,16 +46,11 @@ public class HomeService {
 
         LocalDate todayDate = LocalDate.now(); // 현재 날짜
 
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        Integer year = selectedDate.getYear();
-        Integer month = selectedDate.getMonthValue();
-        Integer week = selectedDate.get(woy);
-
         // 선택한 날짜에 대한 투두 리스트 불러옴
-        List<Todo> homeTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
+        List<Todo> homeTodoList = todoRepository.findHomeTodoBySelectedDate(selectedDate);
 
         Integer homeTodoCnt = homeTodoList.size();
-        Integer homeTodoDoneCnt = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week).size();
+        Integer homeTodoDoneCnt = todoRepository.findHomeTodoBySelectedDateAndIsChecked(selectedDate).size();
         // 오늘 할 일 70% 달성
         Integer rateOfSuccess = calculateCompletionRate(homeTodoCnt, homeTodoDoneCnt);
         

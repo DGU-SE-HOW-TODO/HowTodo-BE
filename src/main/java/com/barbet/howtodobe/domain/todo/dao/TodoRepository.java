@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,6 +67,17 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     List<Todo> findTodoBySelectedDate (@Param("year") Integer year,
                                  @Param("month") Integer month,
                                  @Param("week") Integer week);
+
+    @Query("SELECT t FROM Todo t " +
+            // "JOIN FETCH t.member m " +
+            "WHERE t.createdDate = :selectedDate")
+    List<Todo> findHomeTodoBySelectedDate (@Param("selectedDate")LocalDate selectedDate);
+
+    @Query("SELECT t FROM Todo t " +
+            // "JOIN FETCH t.member m " +
+            "WHERE t.createdDate = :selectedDate " +
+            "AND t.isChecked = true ")
+    List<Todo> findHomeTodoBySelectedDateAndIsChecked (@Param("selectedDate")LocalDate selectedDate);
 
     @Query("SELECT t FROM Todo t " +
             // "JOIN FETCH t.member m " +
