@@ -1,5 +1,6 @@
 package com.barbet.howtodobe.domain.member.domain;
 
+import com.barbet.howtodobe.global.exception.CustomException;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+
+import static com.barbet.howtodobe.global.exception.CustomErrorCode.NOT_EXIST_PASSWORD;
 
 @Entity
 @Data
@@ -68,6 +71,10 @@ public class Member implements UserDetails {
     }
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(password);
+        if (password != null) {
+            this.password = passwordEncoder.encode(password);
+        } else {
+            new CustomException(NOT_EXIST_PASSWORD);
+        }
     }
 }
