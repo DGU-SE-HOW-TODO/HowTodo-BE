@@ -8,6 +8,5 @@ public class TodoFixRequestDTO {
     String selectedDate;
     Long todoCategoryId;
     Long todoId;
-    @JsonProperty("isFixed")
-    boolean isFixed;
+    Boolean isFixed;
 }

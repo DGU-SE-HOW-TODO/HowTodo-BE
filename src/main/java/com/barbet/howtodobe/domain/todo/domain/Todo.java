@@ -2,17 +2,21 @@ package com.barbet.howtodobe.domain.todo.domain;
 
 import com.barbet.howtodobe.domain.calendar.domain.Calendar;
 import com.barbet.howtodobe.domain.category.domain.Category;
+import com.barbet.howtodobe.domain.member.domain.Member;
+import com.barbet.howtodobe.domain.statistic.domain.Statistic;
+import com.barbet.howtodobe.global.common.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
 @Entity
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "TODO")
-public class Todo { // Date 값은 클라이언트로부터 받아야 해서 BaseTimeEntity X
+public class Todo extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long todoId;
@@ -33,22 +37,48 @@ public class Todo { // Date 값은 클라이언트로부터 받아야 해서 Bas
 
     @Column(name = "is_checked", nullable = true)
     @ColumnDefault("false")
-    private boolean isChecked;
+    private Boolean isChecked;
 
     @Column(name = "is_fixed", nullable = true)
     @ColumnDefault("false")
-    private boolean isFixed;
+    private Boolean isFixed;
 
     @Column(name = "is_delay", nullable = true)
     @ColumnDefault("false")
-    private boolean isDelay;
+    private Boolean isDelay;
 
-    @Builder
-    public Todo(Calendar calendar, Category category, String name, String priority){
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id", nullable = false)
+    private Member member;
+
+    @Column(nullable = true)
+    private String failtagName;
+
+    /** 투두 주차만 따로 컬럼으로 설정
+     * : 투두 관련 쿼리 메서드가 없음
+     */
+    private Integer week;
+
+    public Todo(Calendar calendar, Member member, Category category, String name, String priority){
         this.calendar = calendar;
+        this.member = member;
         this.category = category;
         this.name = name;
         this.priority = priority;
     }
 
+    public void updateTodoWithFailtag (String failtagName,
+                                       Boolean isDelay,
+                                       Boolean isChecked) {
+        this.failtagName = failtagName;
+        this.isDelay = isDelay;
+        this.isChecked = isChecked;
+    }
+
+    public void updateTodoChecked (Boolean isChecked) {
+        this.isChecked = isChecked;
+    }
+    public void updateTodoFixed (Boolean isFixed) {
+        this.isFixed = isFixed;
+    }
 }

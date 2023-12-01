@@ -4,6 +4,8 @@ import com.barbet.howtodobe.domain.calendar.dao.CalendarRepository;
 import com.barbet.howtodobe.domain.calendar.domain.Calendar;
 import com.barbet.howtodobe.domain.category.dao.CategoryRepository;
 import com.barbet.howtodobe.domain.category.domain.Category;
+import com.barbet.howtodobe.domain.member.dao.MemberRepository;
+import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.domain.todo.dto.TodoAssignRequestDTO;
@@ -15,6 +17,7 @@ import java.sql.Date;
 @Service
 @RequiredArgsConstructor
 public class TodoAssignService {
+    private final MemberRepository memberRepository;
     private final TodoRepository todoRepository;
     private final CategoryRepository categoryRepository;
 
@@ -22,34 +25,31 @@ public class TodoAssignService {
 
     public Todo assignTodo(TodoAssignRequestDTO todoAssignRequestDTO) {
 
-        try {
-            Date date = Date.valueOf(todoAssignRequestDTO.getSelectedDate());
+        // TODO 임시 멤버
+        Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
 
-            Calendar cal = calendarRepository.findByDate(date).get();
+        Date date = Date.valueOf(todoAssignRequestDTO.getSelectedDate());
 
-            if (cal == null)
-                throw new RuntimeException("날짜에 맞는 캘린더가 존재하지 않습니다.");
-            Category category = categoryRepository.findById(todoAssignRequestDTO.getTodoCategoryId()).get();
-            if (category == null)
-                throw new RuntimeException("카테고리가 존재하지 않습니다.");
+        Calendar cal = calendarRepository.findByDate(date).orElseThrow(() -> new RuntimeException("날짜에 맞는 캘린더가 존재하지 않습니다."));
+        Category category = categoryRepository.findById(todoAssignRequestDTO.getTodoCategoryId()).orElseThrow(() -> new RuntimeException("카테고리가 존재하지 않습니다."));
 
-            Todo todo = Todo.builder()
-                    .calendar(cal)
-                    .category(category)
-                    .name(todoAssignRequestDTO.getTodo())
-                    .priority(todoAssignRequestDTO.getPriority())
-                    .build();
+        Todo todo = Todo.builder()
+                .calendar(cal)
+                .category(category)
+                .member(tempMember)
+                .week(cal.calculateWeek())
+                .name(todoAssignRequestDTO.getTodo())
+                .priority(todoAssignRequestDTO.getPriority())
+                .build();
 
-            Todo _todo = todoRepository.save(todo);
-            System.out.println("todo:"+_todo);
-            if (_todo.getTodoId() > 0) {
-                return _todo;
-            }
-            else {
-                throw new RuntimeException("투두 등록 실패");
-            }
-        }catch (RuntimeException e){
-            throw new RuntimeException("투두 등록 실패");
+        Todo _todo = todoRepository.save(todo);
+        System.out.println("todo:" + _todo);
+
+        if (_todo.getTodoId() > 0) {
+            return _todo;
+        } else {
+            throw new RuntimeException("투두 등록 실패: _todo.getTodoId()가 0보다 작거나 같습니다.");
         }
     }
+
 }

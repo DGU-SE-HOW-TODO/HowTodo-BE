@@ -1,5 +1,6 @@
 package com.barbet.howtodobe.global.common;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
@@ -18,10 +19,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseTimeEntity {
 
     @CreatedDate
-    private LocalDateTime createdDate;
+    private LocalDate createdDate;
 
     @LastModifiedDate
-    private LocalDateTime modifiedDate;
+    private LocalDate modifiedDate;
 
     public int calculateWeek() {
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();

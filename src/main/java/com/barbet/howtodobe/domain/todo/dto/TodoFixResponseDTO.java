@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class TodoFixResponseDTO {
     @JsonProperty("isFixed")
-    boolean isFixed;
+    Boolean isFixed;
 }

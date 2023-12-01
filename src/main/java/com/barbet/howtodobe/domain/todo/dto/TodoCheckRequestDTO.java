@@ -8,6 +8,5 @@ public class TodoCheckRequestDTO {
     String selectedDate;
     Long todoCategoryId;
     Long todoId;
-    @JsonProperty("isChecked")
-    boolean isChecked;
+    Boolean isChecked;
 }

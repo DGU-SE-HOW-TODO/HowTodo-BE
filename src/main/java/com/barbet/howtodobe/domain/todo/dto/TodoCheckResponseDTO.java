@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class TodoCheckResponseDTO {
     @JsonProperty("isChecked")
-    boolean isChecked;
+    Boolean isChecked;
 }
