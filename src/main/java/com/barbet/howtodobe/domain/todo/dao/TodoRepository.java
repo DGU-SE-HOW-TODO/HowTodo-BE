@@ -29,7 +29,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     @Query(value = "SELECT t FROM Todo t " +
             "WHERE t.calendar = :calendar_id " +
             "and t.name = :name " +
-            "and t.category = :category_id ")
+            "and t.category.categoryId = :category_id ")
     Optional<Todo> findByCalCatName(@Param("calendar_id") Long calendarId,
                                     @Param("category_id") Long categoryId,
                                     @Param("name") String name);

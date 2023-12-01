@@ -13,7 +13,7 @@ public class TodoFixService {
 
     public boolean fixTodo(TodoFixRequestDTO todoFixRequestDTO){
         try {
-            boolean newIsFixed = todoFixRequestDTO.isFixed();
+            boolean newIsFixed = todoFixRequestDTO.getIsFixed();
             newIsFixed = !newIsFixed;
 
             Todo _todo = todoRepository.findByTodoCategoryId(
