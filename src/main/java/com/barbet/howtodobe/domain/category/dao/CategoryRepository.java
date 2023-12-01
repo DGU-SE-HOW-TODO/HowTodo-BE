@@ -23,6 +23,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                                      @Param("week") Integer week);
 
     // 대분류 ID로 대분류명 찾기
-    String findCategoryNameByCategoryId(Long categoryId);
-
+    Category findCategoryByCategoryId(Long categoryId);
 }
