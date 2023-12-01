@@ -62,7 +62,7 @@ public class StatisticService {
             // 3. 해당 Category Id에 대한 투두 중, 달성 완료한 개수
             Integer categoryTodoDoneCnt = Math.toIntExact(todoByCategory.stream().filter(Todo::getIsChecked).count());
 
-            String nowCategory = categoryRepository.findCategoryNameByCategoryId(categortId);
+            String nowCategory = categoryRepository.findCategoryByCategoryId(categortId).getName();
             Integer nowCategoryRate = categoryTodoCnt > 0 ? Integer.valueOf ((int) (categoryTodoDoneCnt * 100.0) / categoryTodoCnt) : null;
 
             // 4. NowCategoryDate DTO 객체 생성 후 리스트에 추가
