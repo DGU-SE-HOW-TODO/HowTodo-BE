@@ -78,4 +78,7 @@ public class Todo extends BaseTimeEntity {
     public void updateTodoChecked (Boolean isChecked) {
         this.isChecked = isChecked;
     }
+    public void updateTodoFixed (Boolean isFixed) {
+        this.isFixed = isFixed;
+    }
 }

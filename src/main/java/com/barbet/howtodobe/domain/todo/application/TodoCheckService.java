@@ -52,7 +52,7 @@ public class TodoCheckService {
     public void updateTodoChecked (Long todoId) {
 
         // TODO 임시 멤버
-        Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
+        // Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
 
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new CustomException(TODO_NOT_FOUND));

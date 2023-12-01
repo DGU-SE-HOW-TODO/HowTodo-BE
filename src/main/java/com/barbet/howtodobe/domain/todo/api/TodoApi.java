@@ -49,33 +49,33 @@ public class TodoApi {
         }
     }
 
-    @PostMapping(value = "/fix", produces = "application/json")
-    public ResponseEntity<Message> fix(@RequestBody TodoFixRequestDTO todoFixRequestDTO) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        try {
-            boolean newIsFixed = todoFixService.fixTodo(todoFixRequestDTO);
-            String responseMessage;
-            if (newIsFixed){
-                responseMessage = "투두 고정 완료";
-            }
-            else {
-                responseMessage = "투두 고정 해제 완료";
-            }
-
-            TodoFixResponseDTO todoFixResponse = new TodoFixResponseDTO(newIsFixed);
-
-            return new ResponseEntity(
-                    new Message(
-                    new ApiStatus(HowTodoStatus.OK, responseMessage),
-                    todoFixResponse),
-                    httpHeaders, HttpStatus.OK);
-
-        }catch (RuntimeException e) {
-            return new ResponseEntity(
-                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, e.getMessage()),
-                    httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PostMapping(value = "/fix", produces = "application/json")
+//    public ResponseEntity<Message> fix(@RequestBody TodoFixRequestDTO todoFixRequestDTO) {
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        try {
+//            boolean newIsFixed = todoFixService.fixTodo(todoFixRequestDTO);
+//            String responseMessage;
+//            if (newIsFixed){
+//                responseMessage = "투두 고정 완료";
+//            }
+//            else {
+//                responseMessage = "투두 고정 해제 완료";
+//            }
+//
+//            TodoFixResponseDTO todoFixResponse = new TodoFixResponseDTO(newIsFixed);
+//
+//            return new ResponseEntity(
+//                    new Message(
+//                    new ApiStatus(HowTodoStatus.OK, responseMessage),
+//                    todoFixResponse),
+//                    httpHeaders, HttpStatus.OK);
+//
+//        }catch (RuntimeException e) {
+//            return new ResponseEntity(
+//                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, e.getMessage()),
+//                    httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 //    @PostMapping(value = "/check", produces = "application/json")
 //    public ResponseEntity<Message> check(@RequestBody TodoCheckRequestDTO todoCheckRequestDTO) {
@@ -112,10 +112,9 @@ public class TodoApi {
     }
 
     // 실패태그와 isDelay값만 변경됨
-    @PatchMapping("/failtag/{todoId}")
-    public ResponseEntity<Void> enrollTodoWithFailtag(@PathVariable Long todoId,
-                                                      @RequestBody TodoFailtagRequestDTO request) {
-        todoWithFailtagService.enrollTodoWithFailtag(todoId, request);
+    @PatchMapping("/fix/{todoId}")
+    public ResponseEntity<Void> updateTodoFixed(@PathVariable Long todoId) {
+        todoFixService.updateTodoFixed(todoId);
         return ResponseEntity.ok().build();
     }
 }
