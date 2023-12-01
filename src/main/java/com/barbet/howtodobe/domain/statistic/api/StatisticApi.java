@@ -3,6 +3,7 @@ package com.barbet.howtodobe.domain.statistic.api;
 import com.barbet.howtodobe.domain.statistic.application.StatisticService;
 import com.barbet.howtodobe.domain.statistic.dto.StatisticResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +19,17 @@ import java.time.LocalDate;
 public class StatisticApi {
 
     private final StatisticService statisticService;
-    @GetMapping("/{selectedDate}")
-    public ResponseEntity<StatisticResponseDTO> getStatistics (@PathVariable("selectedDate")LocalDate selectedDate,
-                                                               HttpServletRequest httpServletRequest) {
+//    @GetMapping("/{selectedDate}")
+//    public ResponseEntity<StatisticResponseDTO> getStatistics (@PathVariable("selectedDate")LocalDate selectedDate,
+//                                                               HttpServletRequest httpServletRequest) {
+//        return ResponseEntity.ok().body(statisticService.getStatistic(selectedDate, httpServletRequest));
+//    }
+
+    @GetMapping(value = "/{selectedDate}", produces = "application/json")
+    public ResponseEntity<StatisticResponseDTO> getStatistics(
+            @PathVariable("selectedDate")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate,
+            HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok().body(statisticService.getStatistic(selectedDate, httpServletRequest));
     }
 }
