@@ -39,46 +39,45 @@ public class StatisticService {
     private final CategoryRepository categoryRepository;
     private final NowCategoryRepository nowCategoryRepository;
     private final NowFailtagRepository nowFailtagRepository;
-    private final FailtagRepository failtagRepository;
+
 
     /** 대분류 통계 정보 */
-    private List<NowCategory> getWeekCategory(List<Long> categoryIdList, LocalDate selectedDate) {
+    // categoryIdList : 한주에 해당하는 대분류 목록
+    private List<NowCategory> getWeekCategory(List<Long> categoryIdList, Integer year, Integer month, Integer week) {
         List<NowCategory> nowCategoryDataList = new ArrayList<>();
 
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        Integer year = selectedDate.getYear();
-        Integer month = selectedDate.getMonthValue();
-        Integer week = selectedDate.get(woy);
-
-        for (Long categortId : categoryIdList) {
+        for (Long categoryId : categoryIdList) {
             // Optional<Category> category = categoryRepository.findById(categortId);
 
             // 1. Category id에 해당하는 투두 리스트 가져오기
-            List<Todo> todoByCategory = todoRepository.categoryForStatistic(year, month, week, categortId);
+            List<Todo> todoByCategory = todoRepository.categoryForStatistic(year, month, week, categoryId);
 
-            // 2. 해당 Category Id에 대한 투두 개수
-            Integer categoryTodoCnt = todoByCategory.size();
+            // TODO 만약 todoByCategory가 null이라면?
+            if (!todoByCategory.isEmpty()) {
+                // 2. 해당 Category Id에 대한 투두 개수
+                Integer categoryTodoCnt = todoByCategory.size();
 
-            // 3. 해당 Category Id에 대한 투두 중, 달성 완료한 개수
-            Integer categoryTodoDoneCnt = Math.toIntExact(todoByCategory.stream().filter(Todo::getIsChecked).count());
+                // 3. 해당 Category Id에 대한 투두 중, 달성 완료한 개수
+                Integer categoryTodoDoneCnt = Math.toIntExact(todoByCategory.stream().filter(Todo::getIsChecked).count());
 
-            String nowCategory = categoryRepository.findCategoryByCategoryId(categortId).getName();
-            Integer nowCategoryRate = categoryTodoCnt > 0 ? Integer.valueOf ((int) (categoryTodoDoneCnt * 100.0) / categoryTodoCnt) : null;
+                String nowCategory = categoryRepository.findCategoryByCategoryId(categoryId).getName();
 
-            // 4. NowCategoryDate DTO 객체 생성 후 리스트에 추가
-            NowCategory nowCategoryData = new NowCategory(nowCategory, nowCategoryRate);
-            
-            // 5. 리스트에 최종 출력 값 저장
-            nowCategoryDataList.add(nowCategoryData);
+                Integer nowCategoryRate = categoryTodoCnt > 0 ? Integer.valueOf ((int) (categoryTodoDoneCnt * 100.0) / categoryTodoCnt) : null;
+
+                NowCategory nowCategoryData = new NowCategory(nowCategory, nowCategoryRate);
+
+                nowCategoryDataList.add(nowCategoryData);
+            }
         }
 
-        // 6. nowCategoryRate에 따라 내림차순 정렬
-        nowCategoryDataList = nowCategoryRepository.findAllByOrderByNowCategoryRateDesc()
-                .stream()
-                .map(category -> new NowCategory(category.getNowCategory(), category.getNowCategoryRate()))
-                .collect(Collectors.toList());
+        if (nowCategoryDataList != null && !nowCategoryDataList.isEmpty()) {
+            // 6. nowCategoryRate에 따라 내림차순 정렬
+            nowCategoryDataList.sort(Comparator.comparingInt(NowCategory::getNowCategoryRate).reversed());
 
-        if (nowCategoryDataList.isEmpty()) {
+            nowCategoryDataList = nowCategoryDataList.stream()
+                    .map(category -> new NowCategory(category.getNowCategory(), category.getNowCategoryRate()))
+                    .collect(Collectors.toList());
+        } else {
             throw new CustomException(NOT_EXIST_STATISTICS_INFO);
         }
 
@@ -110,40 +109,38 @@ public class StatisticService {
     }
 
     /** selectedDate에 따른 통계 값 전체 */
-    public StatisticResponseDTO getStatistic (LocalDate selectedDate, HttpServletRequest request) {
+    public StatisticResponseDTO getStatistic (Integer year, Integer month, Integer week, HttpServletRequest request) {
 //        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
 //                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         // TODO HttpServletRequest request 추가
 
         /** 투두 관련 */
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        Integer year = selectedDate.getYear();
-        Integer month = selectedDate.getMonthValue();
-        Integer week = selectedDate.get(woy);
-
         // 이번주 투두 리스트
         List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
         List<Todo> nowTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
-
-        // TODO 이번주가 1주차인 경우도 조건 추가
-        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1);
-        List<Todo> prveTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week-1);
-
-        Integer prevTodoCnt = prevTodoList.size();
-        Integer prevTodoDoneCnt = prveTodoDoneList.size();
         Integer nowTodoCnt = nowTodoList.size();
         Integer nowTodoDoneCnt = nowTodoDoneList.size();
 
-        // TODO 이번주나 지난주에 한일이 없거나 아예 투두가 없는 경우 로직 추가
-        // +) rateOfChange가 음수인 경우엔 달성률이 더 떨어진건데 이건 프론트가 알아서 처리?
-        Double prevTodoRate = (prevTodoCnt == 0) ? 0.0 : ((double) prevTodoDoneCnt / prevTodoCnt) * 100.0;
-        Double nowTodoRate = (nowTodoCnt == 0) ? 0.0 : ((double) nowTodoDoneCnt / nowTodoCnt) * 100.0;
+        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1);
+        List<Todo> prveTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week-1);
+        Integer prevTodoCnt = prevTodoList.size();
+        Integer prevTodoDoneCnt = prveTodoDoneList.size();
 
-        Integer rateOfChange = (prevTodoRate == null || nowTodoRate == null) ? null : nowTodoRate.intValue() - prevTodoRate.intValue();
+        Integer rateOfChange;
+        if (prevTodoCnt != 0) { // 저번주차가 존재하는 경우
+            Double prevTodoRate = (prevTodoCnt == 0) ? 0.0 : ((double) prevTodoDoneCnt / prevTodoCnt) * 100.0;
+            Double nowTodoRate = (nowTodoCnt == 0) ? 0.0 : ((double) nowTodoDoneCnt / nowTodoCnt) * 100.0;
+
+            rateOfChange = (prevTodoRate == null || nowTodoRate == null) ? null : nowTodoRate.intValue() - prevTodoRate.intValue();
+        } else {
+            rateOfChange = 0;
+        }
 
         /** 대분류 관련 */
+        // 한 주에 해당하는 대분류 목록
         List<Long> nowCategoryIdList = categoryRepository.findCategoryIdsByDate(year, month, week);
-        List<NowCategory> nowCategoryData = getWeekCategory(nowCategoryIdList, selectedDate);
+
+        List<NowCategory> nowCategoryData = getWeekCategory(nowCategoryIdList, year, month, week);
 
         String nowBestCateogry = null;
         if (!nowCategoryData.isEmpty()) {
