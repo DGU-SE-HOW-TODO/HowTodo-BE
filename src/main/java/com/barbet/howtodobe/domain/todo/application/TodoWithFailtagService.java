@@ -44,8 +44,11 @@ public class TodoWithFailtagService {
     }
 
     public Boolean enrollTodoWithFailtag (Long todoId, TodoFailtagRequestDTO request) {
-        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
+//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        // TODO 임시 멤버
+        Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
 
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new CustomException(TODO_NOT_FOUND));
@@ -65,7 +68,8 @@ public class TodoWithFailtagService {
             if (!thisWeekFailtagList.contains(request.getFailTagName())) {
                 throw new CustomException(INVALID_FAILTAG);
             } else {
-                todo.updateTodoWithFailtag(request.getFailTagName());
+                todo.updateTodoWithFailtag(request.getFailTagName(), request.getIsDelay(),false);
+                todoRepository.save(todo);
             }
         } else {
             throw new CustomException(NOT_EXIST_WEEK_FAILTAG);

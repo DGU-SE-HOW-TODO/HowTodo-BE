@@ -21,10 +21,13 @@ public class CategoryService {
 
     /** 대분류 등록 */
     public void createCategory(CategoryRequestDTO request) {
-        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
+//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        Category category = request.toEntity(member);
+        // TODO 임시 멤버
+        Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
+
+        Category category = request.toEntity(tempMember);
         categoryRepository.save(category);
     }
 }

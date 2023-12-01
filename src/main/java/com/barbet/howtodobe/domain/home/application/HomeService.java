@@ -41,8 +41,8 @@ public class HomeService {
     }
 
     public HomeResponseDTO getHomeInfo (LocalDate selectedDate, HttpServletRequest request) {
-        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
+//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         LocalDate todayDate = LocalDate.now(); // 현재 날짜
 

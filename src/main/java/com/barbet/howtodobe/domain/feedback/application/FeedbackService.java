@@ -51,7 +51,7 @@ public class FeedbackService {
     /** 미루기 피드백 */
     // 가장 많이 미룬 카테고리 id
     private Long getMostDelayCategoryId(List<Todo> isDelayTodoList) {
-        
+
         // key: 카테고리 id, value: 미룬 투두 수
         Map<Long, Long> categoryCntMap = isDelayTodoList.stream()
                 .collect(Collectors.groupingBy(todo -> todo.getCategory().getCategoryId(), Collectors.counting()));
@@ -93,8 +93,8 @@ public class FeedbackService {
 
     /** 피드백 조회 */
     public FeedbackResponseDTO getFeedback (LocalDate selectedDate, HttpServletRequest request) {
-        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
+//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         Integer year = selectedDate.getYear();

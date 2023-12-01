@@ -26,8 +26,11 @@ public class FailtagService {
     private final FailtagRepository failtagRepository;
 
     public void select5Failtags (FailtagRequestDTO request) {
-        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
+//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        // TODO 임시 멤버
+        Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
 
         List<String> selectedFailtagList = request.getSelectedFailtagList();
 
@@ -37,10 +40,11 @@ public class FailtagService {
 
         for (String failtagName : selectedFailtagList) {
             Failtag failtag = Failtag.builder()
-                    .member(member)
+                    .member(tempMember)
                     .year(request.getYear())
                     .month(request.getMonth())
                     .week(request.getWeek())
+                    .name(failtagName)
                     .selectedFailtagList(List.of(failtagName))
                     .build();
             failtagRepository.save(failtag);

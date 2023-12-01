@@ -26,6 +26,7 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.barbet.howtodobe.global.exception.CustomErrorCode.NOT_EXIST_STATISTICS_INFO;
 import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOUND;
 
 @Service
@@ -77,6 +78,10 @@ public class StatisticService {
                 .map(category -> new NowCategory(category.getNowCategory(), category.getNowCategoryRate()))
                 .collect(Collectors.toList());
 
+        if (nowCategoryDataList.isEmpty()) {
+            throw new CustomException(NOT_EXIST_STATISTICS_INFO);
+        }
+
         return nowCategoryDataList;
     }
 
@@ -106,9 +111,9 @@ public class StatisticService {
 
     /** selectedDate에 따른 통계 값 전체 */
     public StatisticResponseDTO getStatistic (LocalDate selectedDate, HttpServletRequest request) {
-        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        // TODO HttpServletRequest request 추가하기
+//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
+//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        // TODO HttpServletRequest request 추가
 
         /** 투두 관련 */
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
