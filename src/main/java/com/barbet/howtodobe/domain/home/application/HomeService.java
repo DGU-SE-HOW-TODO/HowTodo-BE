@@ -52,7 +52,7 @@ public class HomeService {
         Integer homeTodoCnt = homeTodoList.size();
         Integer homeTodoDoneCnt = todoRepository.findHomeTodoBySelectedDateAndIsChecked(selectedDate).size();
         Integer rateOfSuccess = calculateCompletionRate(homeTodoCnt, homeTodoDoneCnt);
-        
+
         List<HomeResponseDTO.TodoCategoryData> todoCategoryDataList = new ArrayList<>();
         List<HomeResponseDTO.TodoCategoryData.TodoData> todoDataList = new ArrayList<>();
 
@@ -61,11 +61,11 @@ public class HomeService {
                 .collect(Collectors.groupingBy(Todo::getCategory))
                 .forEach(((category, todoList) -> {
                     Long categoryId = category.getCategoryId();
-                    
+                    String todoCategory = category.getName();
+
                     List<HomeResponseDTO.TodoCategoryData.TodoData> tempTodoDataList = todoList.stream()
                             .map(todo -> new HomeResponseDTO.TodoCategoryData.TodoData(
                                     todo.getTodoId(),
-                                    todo.getCategory().getName(),
                                     todo.getName(),
                                     todo.getPriority(),
                                     todo.getIsChecked(),
@@ -74,13 +74,13 @@ public class HomeService {
                                     todo.getFailtagName()
                             ))
                             .collect(Collectors.toList());
-                    
+
                     // todoCategoryData -> [todoCategoryId, <todoData>]
-                    HomeResponseDTO.TodoCategoryData todocategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList);
+                    HomeResponseDTO.TodoCategoryData todocategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList, todoCategory);
                     todoCategoryDataList.add(todocategoryData);
                     todoDataList.addAll(tempTodoDataList);
                 }));
 
-        return new HomeResponseDTO(rateOfSuccess, todoCategoryDataList, todayDate, selectedDate, todoDataList);
+        return new HomeResponseDTO(rateOfSuccess, todoCategoryDataList, todoDataList);
     }
 }
