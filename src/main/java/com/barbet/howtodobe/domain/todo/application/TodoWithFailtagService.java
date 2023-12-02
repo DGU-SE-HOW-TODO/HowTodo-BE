@@ -39,6 +39,11 @@ public class TodoWithFailtagService {
         List<String> selectedFailtagList = failtags.stream()
                 .flatMap(failtag -> failtag.getSelectedFailtagList().stream())
                 .collect(Collectors.toList());
+        if (selectedFailtagList.size() > 5) {
+            selectedFailtagList = selectedFailtagList.subList(selectedFailtagList.size() - 5, selectedFailtagList.size());
+        } else {
+            selectedFailtagList = selectedFailtagList;
+        }
 
         return selectedFailtagList;
     }
