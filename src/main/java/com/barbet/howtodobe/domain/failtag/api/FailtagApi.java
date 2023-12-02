@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.List;
@@ -28,17 +30,15 @@ public class FailtagApi {
 
     @PostMapping("/todoCategory")
     public ResponseEntity<Void> select5Failtag(@RequestBody FailtagRequestDTO request) {
-        System.out.println("fail tag request: "+ request);
         failtagService.select5Failtags(request);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{selectedDate}")
     public ResponseEntity<Object> getSelected5Failtag(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate) {
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        Integer woy = selectedDate.get(WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear());
         Integer year = selectedDate.getYear();
         Integer month = selectedDate.getMonthValue();
-        Integer week = selectedDate.get(woy);
-        return ResponseEntity.ok().body(new FailTagResponseDTO(todoWithFailtagService.findFailtagsBySelectedDate(year, month, week)));
+        return ResponseEntity.ok().body(new FailTagResponseDTO(todoWithFailtagService.findFailtagsBySelectedDate(year, month, woy)));
     }
 }
