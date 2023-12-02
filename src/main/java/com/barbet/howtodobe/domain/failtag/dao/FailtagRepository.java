@@ -14,13 +14,9 @@ import java.util.List;
 @Repository
 public interface FailtagRepository extends JpaRepository<Failtag, Long> {
 
-    @Query("SELECT f FROM Failtag f " +
-            "WHERE f.year = :year " +
-            "AND f.month = :month " +
-            "AND f.week = :week")
-    List<Failtag> findFailtagsBySelectedDate (@Param("year") Integer year,
-                                             @Param("month") Integer month,
-                                             @Param("week") Integer week);
+    @Query("SELECT f FROM Failtag f "+
+            "WHERE f.week = :week")
+    List<Failtag> findFailtagsBySelectedDate (@Param("week") Integer week);
 
     @Transactional
     @Modifying

@@ -33,7 +33,7 @@ public class TodoWithFailtagService {
     private final FailtagRepository failtagRepository;
 
     public List<String> findFailtagsBySelectedDate(Integer year, Integer month, Integer week) {
-        List<Failtag> failtags = failtagRepository.findFailtagsBySelectedDate(year, month, week);
+        List<Failtag> failtags = failtagRepository.findFailtagsBySelectedDate(week);
 
         // 각 Failtag 객체에서 selectedFailtagList를 추출하여 리스트로 만들기
         List<String> selectedFailtagList = failtags.stream()
