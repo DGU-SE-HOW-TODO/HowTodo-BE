@@ -38,7 +38,7 @@ public class FailtagService {
 
         List<String> selectedFailtagList = request.getSelectedFailtagList();
 
-        if (selectedFailtagList.size() > 5) { // 실패태그 선택 5개해야 함
+        if (selectedFailtagList.size() != 5) { // 실패태그 선택 5개해야 함
             throw new CustomException(FAILTAG_COUNT_IS_NOT_FIVE);
         }
 
