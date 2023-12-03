@@ -1,20 +1,24 @@
 package com.barbet.howtodobe.domain.todo.application;
 
+import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.domain.todo.dto.TodoFixRequestDTO;
+import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
 import com.barbet.howtodobe.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.CAN_NOT_TODO_CHECK;
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.TODO_NOT_FOUND;
+import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
 public class TodoFixService {
     private final TodoRepository todoRepository;
+    private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+
 
 //    public boolean fixTodo(TodoFixRequestDTO todoFixRequestDTO){
 //        try {
@@ -48,15 +52,14 @@ public class TodoFixService {
 //    }
 
     public void updateTodoFixed (Long todoId) {
-
-        // TODO 임시 멤버
-        // Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
+        Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new CustomException(TODO_NOT_FOUND));
 
-        if (todo.getIsFixed() == null) {
-            todo.updateTodoFixed(true);
+        if (!todo.getIsFixed()) {
+            todo.updateTodoFixed(true, member);
         }
         todoRepository.save(todo);
     }

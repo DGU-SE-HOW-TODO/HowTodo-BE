@@ -1,6 +1,7 @@
 package com.barbet.howtodobe.domain.todo.api;
 
 import com.barbet.howtodobe.domain.calendar.application.UpdateSuccessRateService;
+import com.barbet.howtodobe.domain.failtag.dto.FailtagRequestDTO;
 import com.barbet.howtodobe.domain.todo.application.TodoAssignService;
 import com.barbet.howtodobe.domain.todo.application.TodoCheckService;
 import com.barbet.howtodobe.domain.todo.application.TodoFixService;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/todo")
@@ -115,6 +118,14 @@ public class TodoApi {
     @PatchMapping("/fix/{todoId}")
     public ResponseEntity<Void> updateTodoFixed(@PathVariable Long todoId) {
         todoFixService.updateTodoFixed(todoId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/failtag/{todoId}")
+    public ResponseEntity<Void> enrollTodoWithFailtag(@PathVariable Long todoId,
+                                                      @RequestBody TodoFailtagRequestDTO requestDTO,
+                                                      HttpServletRequest request) {
+        todoWithFailtagService.enrollTodoWithFailtag(todoId, requestDTO, request);
         return ResponseEntity.ok().build();
     }
 }

@@ -6,6 +6,7 @@ import com.barbet.howtodobe.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +16,7 @@ import java.util.Locale;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class FailtagRequestDTO {
 
     private String selectedDate;

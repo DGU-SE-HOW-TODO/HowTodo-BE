@@ -3,6 +3,7 @@ package com.barbet.howtodobe.domain.statistic.application;
 import com.barbet.howtodobe.domain.category.dao.CategoryRepository;
 import com.barbet.howtodobe.domain.category.domain.Category;
 import com.barbet.howtodobe.domain.member.dao.MemberRepository;
+import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.nowCategory.dao.NowCategoryRepository;
 import com.barbet.howtodobe.domain.nowCategory.domain.NowCategory;
 import com.barbet.howtodobe.domain.nowFailtag.dao.NowFailtagRepository;
@@ -10,7 +11,8 @@ import com.barbet.howtodobe.domain.nowFailtag.domain.NowFailtag;
 import com.barbet.howtodobe.domain.statistic.dto.StatisticResponseDTO;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
-import com.barbet.howtodobe.global.util.TokenProvider;
+import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
+import com.barbet.howtodobe.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +23,12 @@ import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class StatisticService {
-    private final TokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
 
     private final TodoRepository todoRepository;
@@ -83,9 +87,14 @@ public class StatisticService {
 
     /** selectedDate에 따른 통계 값 전체 */
     public StatisticResponseDTO getStatistic (LocalDate selectedDate, HttpServletRequest request) {
-//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-        // TODO HttpServletRequest request 추가
+        Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        
+        // 회원인지 체크
+        Long memberId = jwtTokenProvider.getUserIdByServlet(request);
+        if (memberId != null && !memberId.equals(member.getMemberId())) {
+            throw new CustomException(USER_NOT_FOUND);
+        }
 
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         Integer year = selectedDate.getYear();

@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 
 @Getter
@@ -19,10 +20,11 @@ public class HomeResponseDTO {
 
     public HomeResponseDTO (Integer rateOfSuccess,
                             List<TodoCategoryData> todoCategoryData,
-                            List<TodoCategoryData.TodoData> todoData) {
+                            Map<Long, List<TodoCategoryData.TodoData>> todoData) {
         this.rateOfSuccess = rateOfSuccess;
         this.todoCategoryData = todoCategoryData;
-        this.todoCategoryData.forEach(categoryData -> categoryData.todoData = todoData);
+        this.todoCategoryData.forEach(categoryData
+                -> categoryData.todoData = todoData.get(categoryData.getTodoCategoryId()));
     }
 
     @Getter
@@ -38,9 +40,8 @@ public class HomeResponseDTO {
         private String todoCategory;
 
 
-        public TodoCategoryData (Long categoryId, List<TodoData> todoDataList, String todoCategory) {
+        public TodoCategoryData (Long categoryId, String todoCategory) {
             this.todoCategoryId = categoryId;
-            this.todoData = todoDataList;
             this.todoCategory = todoCategory;
         }
 

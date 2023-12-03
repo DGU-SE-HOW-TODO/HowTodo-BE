@@ -35,15 +35,15 @@ public class Todo extends BaseTimeEntity {
     @Column(nullable = false)
     private String priority;
 
-    @Column(name = "is_checked", nullable = true)
+    @Column(name = "is_checked", nullable = false)
     @ColumnDefault("false")
     private Boolean isChecked;
 
-    @Column(name = "is_fixed", nullable = true)
+    @Column(name = "is_fixed", nullable = false)
     @ColumnDefault("false")
     private Boolean isFixed;
 
-    @Column(name = "is_delay", nullable = true)
+    @Column(name = "is_delay", nullable = false)
     @ColumnDefault("false")
     private Boolean isDelay;
 
@@ -75,10 +75,12 @@ public class Todo extends BaseTimeEntity {
         this.isChecked = isChecked;
     }
 
-    public void updateTodoChecked (Boolean isChecked) {
+    public void updateTodoChecked (Boolean isChecked, Member member) {
         this.isChecked = isChecked;
+        this.member = member;
     }
-    public void updateTodoFixed (Boolean isFixed) {
+    public void updateTodoFixed (Boolean isFixed, Member member) {
         this.isFixed = isFixed;
+        this.member = member;
     }
 }
