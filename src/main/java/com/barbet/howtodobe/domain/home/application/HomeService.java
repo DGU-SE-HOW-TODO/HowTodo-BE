@@ -73,7 +73,11 @@ public class HomeService {
         불러온 카테고리 명칭 + 선택한 날짜에 맞는 todo를 뿌려주면 됨.
          */
 
-        List<Category> AllCategory = categoryRepository.findAll();
+        List<Category> AllCategory = categoryRepository.findAllByMemberId(member.getMemberId());
+        System.out.println("category all:");
+        for (Category category: AllCategory){
+            System.out.println("cate id: " + category.getCategoryId());
+        }
         List<String> allCategoryNameList = new ArrayList<>();
 
         List<Todo> todayTodoList = new ArrayList<>();
