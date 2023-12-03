@@ -2,10 +2,12 @@ package com.barbet.howtodobe.domain.home.dto;
 
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +26,14 @@ public class HomeResponseDTO {
         this.rateOfSuccess = rateOfSuccess;
         this.todoCategoryData = todoCategoryData;
         this.todoCategoryData.forEach(categoryData
-                -> categoryData.todoData = todoData.get(categoryData.getTodoCategoryId()));
+                -> {
+            List<TodoCategoryData.TodoData> todoList = todoData.get(categoryData.getTodoCategoryId());
+            if (todoList == null){
+                categoryData.todoData = Collections.emptyList();
+            }else {
+            categoryData.todoData = todoList;
+            }
+        });
     }
 
     @Getter

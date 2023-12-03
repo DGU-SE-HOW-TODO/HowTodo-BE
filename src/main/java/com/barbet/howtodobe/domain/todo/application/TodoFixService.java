@@ -1,5 +1,7 @@
 package com.barbet.howtodobe.domain.todo.application;
 
+import com.barbet.howtodobe.domain.calendar.dao.CalendarRepository;
+import com.barbet.howtodobe.domain.calendar.domain.Calendar;
 import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
@@ -10,6 +12,13 @@ import com.barbet.howtodobe.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.List;
+import java.util.Locale;
+
 import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
 
 @Service
@@ -17,39 +26,9 @@ import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
 public class TodoFixService {
     private final TodoRepository todoRepository;
     private final MemberRepository memberRepository;
+    private final CalendarRepository calendarRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-
-//    public boolean fixTodo(TodoFixRequestDTO todoFixRequestDTO){
-//        try {
-//            boolean newIsFixed = todoFixRequestDTO.getIsFixed();
-//            newIsFixed = !newIsFixed;
-//
-//            Todo _todo = todoRepository.findByTodoCategoryId(
-//                    todoFixRequestDTO.getTodoId(),
-//                    todoFixRequestDTO.getTodoCategoryId()).get();
-//
-//
-//            if (_todo == null) {
-//                throw new RuntimeException("해당하는 투두가 존재하지 않음.");
-//            }
-//
-//            todoRepository.updateIsFixed(newIsFixed,
-//                    todoFixRequestDTO.getTodoId(),
-//                    todoFixRequestDTO.getTodoCategoryId());
-//
-//            _todo = todoRepository.findById(todoFixRequestDTO.getTodoId()).get();
-//
-//            if (_todo.getTodoId() > 0){
-//                return _todo.getIsFixed();
-//            }
-//            else {
-//                throw new RuntimeException("해당하는 투두가 존재하지 않음.");
-//            }
-//        } catch (RuntimeException e){
-//            throw new RuntimeException("해당하는 투두가 존재하지 않음.");
-//        }
-//    }
 
     public void updateTodoFixed (Long todoId) {
         Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
@@ -58,9 +37,39 @@ public class TodoFixService {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new CustomException(TODO_NOT_FOUND));
 
+
+        System.out.println("todo fixed check:");
         if (!todo.getIsFixed()) {
+            System.out.println(todo.getIsFixed());
+            List<Calendar> calendars = calendarRepository.findAllByMemberId(member.getMemberId());
+
             todo.updateTodoFixed(true, member);
+            // 현재 사용자가 갖고 있는 캘린더들에 동일한 내용의 투두 추가
+            calendars.stream()
+                    .forEach(calendar ->{
+                        if (todo.getCalendar().getDate().compareTo(calendar.getDate()) >= 0){
+                            return;
+                        }
+
+                        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
+                        LocalDate localDate = LocalDate.parse(calendar.getDate().toString(), formatter);
+
+                        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+                        Integer week = localDate.get(woy);
+
+                            todoRepository.save(Todo.builder()
+                            .calendar(calendar)
+                            .name(todo.getName())
+                            .priority(todo.getPriority())
+                            .isFixed(true)
+                            .isChecked(false)
+                            .isDelay(false)
+                            .member(member)
+                            .category(todo.getCategory())
+                                            .week(week)
+                            .build());
+                    });
         }
-        todoRepository.save(todo);
+//        todoRepository.save(todo);
     }
 }

@@ -43,7 +43,7 @@ public class FailtagService {
 
         List<Failtag> failtagList = failtagRepository.findFailtagsBySelectedDate(week);
 
-        if (failtagList.size() == 5) {
+        if (failtagList.size() != 5) {
             throw new CustomException(FAILTAG_COUNT_IS_NOT_FIVE);
         }
 

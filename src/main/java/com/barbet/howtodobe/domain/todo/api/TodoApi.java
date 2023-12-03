@@ -125,7 +125,10 @@ public class TodoApi {
     public ResponseEntity<Void> enrollTodoWithFailtag(@PathVariable Long todoId,
                                                       @RequestBody TodoFailtagRequestDTO requestDTO,
                                                       HttpServletRequest request) {
-        todoWithFailtagService.enrollTodoWithFailtag(todoId, requestDTO, request);
+        boolean isDelayed = todoWithFailtagService.enrollTodoWithFailtag(todoId, requestDTO, request);
+        if (isDelayed){
+
+        }
         return ResponseEntity.ok().build();
     }
 }

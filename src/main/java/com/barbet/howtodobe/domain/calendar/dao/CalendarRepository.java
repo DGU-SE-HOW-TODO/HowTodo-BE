@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -29,5 +30,9 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
     @Query("SELECT c.calendarId FROM Calendar c " +
             "WHERE c.date = :sqlDate AND c.member.memberId = :memberId")
     Optional<Long> findBySelectedDate(@Param("sqlDate") Date sqlDate, @Param("memberId") Long memberId);
+
+    @Query("SELECT c FROM Calendar c " +
+            "WHERE c.member.memberId = :memberId")
+    List<Calendar> findAllByMemberId(@Param("memberId") Long memberId);
 
 }
