@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
 
@@ -65,7 +66,7 @@ public class HomeService {
         Integer rateOfSuccess = calculateCompletionRate(homeTodoCnt, homeTodoDoneCnt);
 
         List<HomeResponseDTO.TodoCategoryData> todoCategoryDataList = new ArrayList<>();
-        List<HomeResponseDTO.TodoCategoryData.TodoData> todoDataList = new ArrayList<>();
+        Map<Long, List<HomeResponseDTO.TodoCategoryData.TodoData>> todoDataList = new HashMap<>();
 
         /*
         todo를 통해서 카테고리를 불러오면, todo가 없는 경우에 카테고리가 안뜸
@@ -74,10 +75,10 @@ public class HomeService {
          */
 
         List<Category> AllCategory = categoryRepository.findAllByMemberId(member.getMemberId());
-        System.out.println("category all:");
+        /*System.out.println("category all:");
         for (Category category: AllCategory){
             System.out.println("cate id: " + category.getCategoryId());
-        }
+        }*/
         List<String> allCategoryNameList = new ArrayList<>();
 
         List<Todo> todayTodoList = new ArrayList<>();
@@ -97,9 +98,11 @@ public class HomeService {
         todayTodoList.stream()
                 .filter(Objects::nonNull) // Null 필터링 추가
                 .collect(Collectors.groupingBy(Todo::getCategory))
-                .forEach(((category, todoList) -> {
+                .forEach(((_category, todoList) -> {
                     // 할 일 목록을 DTO로 변환
-                    List<HomeResponseDTO.TodoCategoryData.TodoData> tempTodoDataList = todoList.stream()
+                    Stream<Todo> _todoList = todoList.stream()
+                            .filter(todo -> Objects.equals(todo.getCategory().getCategoryId(), _category.getCategoryId()));
+                    List<HomeResponseDTO.TodoCategoryData.TodoData> tempTodoDataList = _todoList
                             .map(todo -> new HomeResponseDTO.TodoCategoryData.TodoData(
                                     todo.getTodoId(),
                                     todo.getName(),
@@ -110,13 +113,19 @@ public class HomeService {
                                     todo.getFailtagName()
                             ))
                             .collect(Collectors.toList());
-                    todoDataList.addAll(tempTodoDataList);
+                    System.out.println("temp todo list: ");
+                    for (HomeResponseDTO.TodoCategoryData.TodoData t: tempTodoDataList){
+                        System.out.println("t: " + t);
+                    }
+                    todoDataList.put(_category.getCategoryId(), tempTodoDataList);
                 }));
+
+
 
         // 카테고리 이름들을 TodoCategoryData에 추가
         for (String categoryName : allCategoryNameList) {
             Long categoryId = categoryRepository.findByCategoryName(categoryName, member.getMemberId()).orElseThrow(() -> new CustomException(NOT_EXIST_WEEK_CATEGORY));
-            HomeResponseDTO.TodoCategoryData todoCategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList, categoryName);
+            HomeResponseDTO.TodoCategoryData todoCategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, categoryName);
             todoCategoryDataList.add(todoCategoryData);
         }
         return new HomeResponseDTO(rateOfSuccess, todoCategoryDataList, todoDataList);
