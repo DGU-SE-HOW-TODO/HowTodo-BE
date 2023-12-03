@@ -62,7 +62,7 @@ public class HomeService {
         List<Todo> homeTodoList = todoRepository.findHomeTodoByCalendarId(calendarId);
 
         Integer homeTodoCnt = homeTodoList.size();
-        Integer homeTodoDoneCnt = todoRepository.findHomeTodoBySelectedDateAndIsChecked(selectedDate).size();
+        Integer homeTodoDoneCnt = todoRepository.findHomeTodoByCalendarIdAndIsChecked(calendarId).size();
         Integer rateOfSuccess = calculateCompletionRate(homeTodoCnt, homeTodoDoneCnt);
 
         List<HomeResponseDTO.TodoCategoryData> todoCategoryDataList = new ArrayList<>();

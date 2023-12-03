@@ -94,9 +94,9 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     @Query("SELECT t FROM Todo t " +
             // "JOIN FETCH t.member m " +
-            "WHERE t.createdDate = :selectedDate " +
+            "WHERE t.calendar.calendarId = :calendarId " +
             "AND t.isChecked = true ")
-    List<Todo> findHomeTodoBySelectedDateAndIsChecked (@Param("selectedDate")LocalDate selectedDate);
+    List<Todo> findHomeTodoByCalendarIdAndIsChecked (@Param("calendarId")Long calendarId);
 
     @Query("SELECT t FROM Todo t " +
             "JOIN FETCH t.member m " +
