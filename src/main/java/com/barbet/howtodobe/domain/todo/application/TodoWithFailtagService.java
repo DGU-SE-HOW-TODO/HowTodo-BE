@@ -33,6 +33,8 @@ public class TodoWithFailtagService {
     private final TodoRepository todoRepository;
     private final FailtagRepository failtagRepository;
 
+    private final TodoDelayService todoDelayService;
+
     public List<String> findFailtagsBySelectedDate(Integer year, Integer month, Integer week, HttpServletRequest request) {
         Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
@@ -90,7 +92,11 @@ public class TodoWithFailtagService {
             throw new CustomException(NOT_EXIST_WEEK_FAILTAG);
         }
 
+        todoDelayService.updateTodoDelayed(memberId, request, httpServletRequest);
+
         // 미뤘는지 여부 반환
         return request.getIsDelay();
     }
+
+
 }

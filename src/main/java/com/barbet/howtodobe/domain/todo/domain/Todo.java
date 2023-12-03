@@ -83,4 +83,9 @@ public class Todo extends BaseTimeEntity {
         this.isFixed = isFixed;
         this.member = member;
     }
+
+    public void updateTodoDelay (Boolean isDelay, Member member) {
+        this.isDelay = isDelay;
+        this.member = member;
+    }
 }
