@@ -34,9 +34,11 @@ public enum CustomErrorCode {
     INVALID_FAILTAG(HttpStatus.BAD_REQUEST, 5003, "잘못 선택된 실패태그 입니다. 이번주에 등록된 실패태그만 선택해주세요"),
 
     // Statistics (6xxx)
-    NOT_EXIST_STATISTICS_INFO(HttpStatus.NOT_FOUND, 6001, "이번주에 통계 정보가 없습니다.");
+    NOT_EXIST_STATISTICS_INFO(HttpStatus.NOT_FOUND, 6001, "이번주에 통계 정보가 없습니다."),
 
-    // Feedback (7xxx)
+    // Calendar (7xxx)
+    NOT_EXIST_CALENDAR(HttpStatus.NOT_FOUND, 7001, "해당 날짜가 캘린더에 존재하지 않습니다");
+
 
     private final HttpStatus httpStatus;
     private final int code;
