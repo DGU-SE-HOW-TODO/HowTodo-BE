@@ -7,8 +7,8 @@ import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
+import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
 import com.barbet.howtodobe.global.exception.CustomException;
-import com.barbet.howtodobe.global.util.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +26,7 @@ import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOU
 @Service
 @RequiredArgsConstructor
 public class HomeService {
-
-    private final TokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final TodoRepository todoRepository;
 
@@ -41,8 +40,8 @@ public class HomeService {
     }
 
     public HomeResponseDTO getHomeInfo (LocalDate selectedDate, HttpServletRequest request) {
-//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         LocalDate todayDate = LocalDate.now(); // 현재 날짜
 
@@ -52,7 +51,7 @@ public class HomeService {
         Integer homeTodoCnt = homeTodoList.size();
         Integer homeTodoDoneCnt = todoRepository.findHomeTodoBySelectedDateAndIsChecked(selectedDate).size();
         Integer rateOfSuccess = calculateCompletionRate(homeTodoCnt, homeTodoDoneCnt);
-        
+
         List<HomeResponseDTO.TodoCategoryData> todoCategoryDataList = new ArrayList<>();
         List<HomeResponseDTO.TodoCategoryData.TodoData> todoDataList = new ArrayList<>();
 
@@ -61,11 +60,11 @@ public class HomeService {
                 .collect(Collectors.groupingBy(Todo::getCategory))
                 .forEach(((category, todoList) -> {
                     Long categoryId = category.getCategoryId();
-                    
+                    String todoCategory = category.getName();
+
                     List<HomeResponseDTO.TodoCategoryData.TodoData> tempTodoDataList = todoList.stream()
                             .map(todo -> new HomeResponseDTO.TodoCategoryData.TodoData(
                                     todo.getTodoId(),
-                                    todo.getCategory().getName(),
                                     todo.getName(),
                                     todo.getPriority(),
                                     todo.getIsChecked(),
@@ -74,13 +73,14 @@ public class HomeService {
                                     todo.getFailtagName()
                             ))
                             .collect(Collectors.toList());
-                    
+
                     // todoCategoryData -> [todoCategoryId, <todoData>]
-                    HomeResponseDTO.TodoCategoryData todocategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList);
+                    HomeResponseDTO.TodoCategoryData todocategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList, todoCategory);
+
                     todoCategoryDataList.add(todocategoryData);
                     todoDataList.addAll(tempTodoDataList);
                 }));
 
-        return new HomeResponseDTO(rateOfSuccess, todoCategoryDataList, todayDate, selectedDate, todoDataList);
+        return new HomeResponseDTO(rateOfSuccess, todoCategoryDataList, todoDataList);
     }
 }

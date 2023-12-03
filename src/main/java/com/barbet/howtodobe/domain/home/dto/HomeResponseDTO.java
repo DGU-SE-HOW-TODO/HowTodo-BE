@@ -17,18 +17,11 @@ public class HomeResponseDTO {
     @JsonProperty("todoCategoryData")
     private List<TodoCategoryData> todoCategoryData;
 
-    private LocalDate todayDate;
-    private LocalDate selectedDate;
-
     public HomeResponseDTO (Integer rateOfSuccess,
                             List<TodoCategoryData> todoCategoryData,
-                            LocalDate todayDate,
-                            LocalDate selectedDate,
                             List<TodoCategoryData.TodoData> todoData) {
         this.rateOfSuccess = rateOfSuccess;
         this.todoCategoryData = todoCategoryData;
-        this.todayDate = todayDate;
-        this.selectedDate = selectedDate;
         this.todoCategoryData.forEach(categoryData -> categoryData.todoData = todoData);
     }
 
@@ -41,10 +34,14 @@ public class HomeResponseDTO {
         @JsonProperty("todoData")
         private List<TodoData> todoData;
 
+        @JsonProperty("todoCategory")
+        private String todoCategory;
 
-        public TodoCategoryData (Long categoryId, List<TodoData> todoDataList) {
+
+        public TodoCategoryData (Long categoryId, List<TodoData> todoDataList, String todoCategory) {
             this.todoCategoryId = categoryId;
             this.todoData = todoDataList;
+            this.todoCategory = todoCategory;
         }
 
         @Getter
@@ -53,8 +50,6 @@ public class HomeResponseDTO {
             @JsonProperty("todoId")
             private Long todoId;
 
-            @JsonProperty("todoCategory")
-            private String todoCategory;
 
             @JsonProperty("todoName")
             private String todoName;
@@ -75,7 +70,6 @@ public class HomeResponseDTO {
             private String failtagName;
 
             public TodoData (Long todoId,
-                             String todoCategory,
                              String todoName,
                              String priority,
                              Boolean isChecked,
@@ -83,7 +77,6 @@ public class HomeResponseDTO {
                              Boolean isDelayed,
                              String failtagName) {
                 this.todoId = todoId;
-                this.todoCategory = todoCategory;
                 this.todoName = todoName;
                 this.priority = priority;
                 this.isChecked = isChecked;
