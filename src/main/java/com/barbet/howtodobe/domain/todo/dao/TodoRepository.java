@@ -60,7 +60,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     /** for Statistic & Home Info */
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week")
@@ -69,18 +69,18 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                  @Param("week") Integer week);
 
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE t.createdDate = :selectedDate")
     List<Todo> findHomeTodoBySelectedDate (@Param("selectedDate")LocalDate selectedDate);
 
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE t.createdDate = :selectedDate " +
             "AND t.isChecked = true ")
     List<Todo> findHomeTodoBySelectedDateAndIsChecked (@Param("selectedDate")LocalDate selectedDate);
 
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -89,7 +89,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                                 @Param("month") Integer month,
                                                 @Param("week") Integer week);
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -102,7 +102,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     /** for feekback */
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -112,7 +112,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                              @Param("week") Integer week);
 
     @Query("SELECT COUNT(t) FROM Todo t " +
-            // "JOIN t.member m " +
+            "JOIN t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -123,7 +123,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                              @Param("priority") String priority);
 
     @Query("SELECT COUNT(t) FROM Todo t " +
-            // "JOIN t.member m " +
+            "JOIN t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +

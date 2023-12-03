@@ -9,14 +9,19 @@ import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.domain.todo.dto.TodoAssignRequestDTO;
+import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
+import com.barbet.howtodobe.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 
+import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class TodoAssignService {
+    private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final TodoRepository todoRepository;
     private final CategoryRepository categoryRepository;
@@ -24,9 +29,8 @@ public class TodoAssignService {
     private final CalendarRepository calendarRepository;
 
     public Todo assignTodo(TodoAssignRequestDTO todoAssignRequestDTO) {
-
-        // TODO 임시 멤버
-        Member tempMember = memberRepository.findByEmail("senuej37@gmail.com");
+        Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         Date date = Date.valueOf(todoAssignRequestDTO.getSelectedDate());
 
@@ -36,7 +40,10 @@ public class TodoAssignService {
         Todo todo = Todo.builder()
                 .calendar(cal)
                 .category(category)
-                .member(tempMember)
+                .member(member)
+                .isFixed(false)
+                .isDelay(false)
+                .isChecked(false)
                 .week(cal.calculateWeek())
                 .name(todoAssignRequestDTO.getTodo())
                 .priority(todoAssignRequestDTO.getPriority())
