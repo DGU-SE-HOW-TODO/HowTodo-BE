@@ -111,7 +111,7 @@ public class HomeService {
 
         // 카테고리 이름들을 TodoCategoryData에 추가
         for (String categoryName : allCategoryNameList) {
-            Long categoryId = categoryRepository.findByCategoryName(categoryName).orElseThrow(() -> new CustomException(NOT_EXIST_WEEK_CATEGORY));
+            Long categoryId = categoryRepository.findByCategoryName(categoryName, member.getMemberId()).orElseThrow(() -> new CustomException(NOT_EXIST_WEEK_CATEGORY));
             HomeResponseDTO.TodoCategoryData todoCategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, todoDataList, categoryName);
             todoCategoryDataList.add(todoCategoryData);
         }

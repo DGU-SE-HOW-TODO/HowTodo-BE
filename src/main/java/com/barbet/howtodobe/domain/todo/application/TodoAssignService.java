@@ -34,7 +34,7 @@ public class TodoAssignService {
 
         Date date = Date.valueOf(todoAssignRequestDTO.getSelectedDate());
 
-        Calendar cal = calendarRepository.findByDate(date).orElseThrow(() -> new RuntimeException("날짜에 맞는 캘린더가 존재하지 않습니다."));
+        Calendar cal = calendarRepository.findByDate(date, member.getMemberId()).orElseThrow(() -> new RuntimeException("날짜에 맞는 캘린더가 존재하지 않습니다."));
         Category category = categoryRepository.findById(todoAssignRequestDTO.getTodoCategoryId()).orElseThrow(() -> new RuntimeException("카테고리가 존재하지 않습니다."));
 
         Todo todo = Todo.builder()

@@ -22,8 +22,9 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
 
 
     @Query(value = "SELECT c FROM Calendar c " +
-            "WHERE c.date = :date_val")
-    Optional<Calendar> findByDate(@Param("date_val") Date date);
+            "WHERE c.date = :date_val AND c.member.memberId = :memberId")
+    Optional<Calendar> findByDate(@Param("date_val") Date date,
+                                  @Param("memberId") Long memberId);
 
     @Query("SELECT c.calendarId FROM Calendar c " +
             "WHERE c.date = :sqlDate")
