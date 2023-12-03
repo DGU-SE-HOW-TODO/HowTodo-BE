@@ -1,7 +1,9 @@
 package com.barbet.howtodobe.domain.feedback.api;
 
 import com.barbet.howtodobe.domain.feedback.application.FeedbackService;
+import com.barbet.howtodobe.domain.feedback.application.TestFeedbackService;
 import com.barbet.howtodobe.domain.feedback.dto.FeedbackResponseDTO;
+import com.barbet.howtodobe.domain.feedback.dto.TestFeedbackResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -32,4 +34,15 @@ public class FeedbackApi {
         Integer week = selectedDate.get(woy);
         return ResponseEntity.ok().body(feedbackService.getFeedback(year, month, week, httpServletRequest));
     }
+
+//    @GetMapping("/{selectedDate}")
+//    public ResponseEntity<TestFeedbackResponseDTO> getFeedback(
+//            @PathVariable("selectedDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate,
+//            HttpServletRequest httpServletRequest) {
+//        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+//        Integer year = selectedDate.getYear();
+//        Integer month = selectedDate.getMonthValue();
+//        Integer week = selectedDate.get(woy);
+//        return ResponseEntity.ok().body(testFeedbackService._getFeedback(year, month, week, httpServletRequest));
+//    }
 }
