@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalField;
@@ -96,11 +97,13 @@ public class TodoWithFailtagService {
 
         todo.updateTodoDelay(true, member);
         todoRepository.save(todo);
-        List<Calendar> calendars = calendarRepository.findAllByMemberId(member.getMemberId());
 
-        Calendar calendar = calendars.stream()
-                .filter(cal -> todo.getCalendar().getDate().compareTo(cal.getDate()) < 0)
-                .findFirst().orElseThrow(() -> new CustomException(TODO_NOT_FOUND));
+        Long calendarId = calendarRepository.findBySelectedDate(
+                Date.valueOf(todo.getCalendar().getDate().toLocalDate().plusDays(1)), memberId)
+                .orElseThrow(() -> new CustomException(NOT_EXIST_CALENDAR));
+
+        Calendar calendar = calendarRepository.findById(calendarId)
+                .orElseThrow(() -> new CustomException(NOT_EXIST_CALENDAR));;
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
         LocalDate localDate = LocalDate.parse(calendar.getDate().toString(), formatter);
