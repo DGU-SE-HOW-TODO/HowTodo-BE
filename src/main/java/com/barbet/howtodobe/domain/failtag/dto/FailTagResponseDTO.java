@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class FailTagResponseDTO {
+public class FailtagResponseDTO {
     List<String> failtags;
 }

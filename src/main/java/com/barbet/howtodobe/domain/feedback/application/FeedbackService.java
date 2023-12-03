@@ -9,29 +9,25 @@ import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
+import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
 import com.barbet.howtodobe.global.exception.CustomException;
-import com.barbet.howtodobe.global.util.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOUND;
+import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
 public class FeedbackService {
 
-    private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final TodoRepository todoRepository;
     private final CategoryRepository categoryRepository;
@@ -93,8 +89,14 @@ public class FeedbackService {
 
     /** 피드백 조회 */
     public FeedbackResponseDTO getFeedback (Integer year, Integer month, Integer week, HttpServletRequest request) {
-//        Member member = memberRepository.findByMemberId(tokenProvider.getMemberId())
-//                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        // 회원인지 체크
+        Long memberId = jwtTokenProvider.getUserIdByServlet(request);
+        if (memberId != null && !memberId.equals(member.getMemberId())) {
+            throw new CustomException(USER_NOT_FOUND);
+        }
 
         /** 달성률 피드백 */
         List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
@@ -154,11 +156,19 @@ public class FeedbackService {
         List<Todo> isDelayTodoList = todoRepository.todoForFeedbackByIsDelayTrue(year, month, week);
 
         Integer delayTodoCnt = isDelayTodoList.size();
-        String mostDelayCategory = categoryRepository.findCategoryByCategoryId(getMostDelayCategoryId(isDelayTodoList)).getName();
+
+        String delayMessage = null;
+        String delayDetailMessage = null;
+        String mostDelayCategory;
+        if (categoryRepository.findCategoryByCategoryId(getMostDelayCategoryId(isDelayTodoList)) == null) {
+            mostDelayCategory = null;
+        } else {
+            mostDelayCategory = categoryRepository.findCategoryByCategoryId(getMostDelayCategoryId(isDelayTodoList)).getName();
+        }
 
         // delayTodoCnt에 따라 보여주는 메시지 값 설정하기
-        String delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
-        String delayDetailMessage = getDetailMessageByDelayCnt(delayTodoCnt);
+        delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
+        delayDetailMessage = getDetailMessageByDelayCnt(delayTodoCnt);
 
         return new FeedbackResponseDTO(rateMessage,
                 rateDetailMessage,

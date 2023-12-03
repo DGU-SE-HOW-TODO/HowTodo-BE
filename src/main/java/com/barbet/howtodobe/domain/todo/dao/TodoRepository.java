@@ -2,6 +2,7 @@ package com.barbet.howtodobe.domain.todo.dao;
 
 import com.barbet.howtodobe.domain.calendar.domain.Calendar;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
+import org.hibernate.annotations.Parent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -60,7 +61,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     /** for Statistic & Home Info */
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week")
@@ -69,9 +70,26 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                  @Param("week") Integer week);
 
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE t.createdDate = :selectedDate")
     List<Todo> findHomeTodoBySelectedDate (@Param("selectedDate")LocalDate selectedDate);
+
+    @Query("SELECT t FROM Todo t " +
+            // "JOIN FETCH t.member m " +
+            "WHERE t.calendar.calendarId = :calendarId")
+    List<Todo> findHomeTodoByCalendarId(@Param("calendarId") Long calendarId);
+
+    @Query("SELECT t FROM Todo t " +
+            // "JOIN FETCH t.member m " +
+            "WHERE t.calendar.calendarId = :calendarId " +
+            "AND t.category.name = :categoryName")
+    List<Todo> findHomeTodoByCalendarIdANDCategoryId(@Param("calendarId") Long calendarId,
+                                                     @Param("categoryName") String categoryName);
+    @Query("SELECT t.category.categoryId FROM Todo t " +
+            // "JOIN FETCH t.member m " +
+            "WHERE t.calendar.calendarId = :calendarId")
+    Optional<Long> findHomeTodoByCategoryId(@Param("calendarId") Long calendarId);
+
 
     @Query("SELECT t FROM Todo t " +
             // "JOIN FETCH t.member m " +
@@ -80,7 +98,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     List<Todo> findHomeTodoBySelectedDateAndIsChecked (@Param("selectedDate")LocalDate selectedDate);
 
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -89,7 +107,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                                 @Param("month") Integer month,
                                                 @Param("week") Integer week);
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -102,7 +120,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
 
     /** for feekback */
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
+            "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -112,7 +130,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                              @Param("week") Integer week);
 
     @Query("SELECT COUNT(t) FROM Todo t " +
-            // "JOIN t.member m " +
+            "JOIN t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
@@ -123,7 +141,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                              @Param("priority") String priority);
 
     @Query("SELECT COUNT(t) FROM Todo t " +
-            // "JOIN t.member m " +
+            "JOIN t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
             "AND t.week = :week " +
