@@ -82,9 +82,10 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     @Query("SELECT t FROM Todo t " +
             // "JOIN FETCH t.member m " +
             "WHERE t.calendar.calendarId = :calendarId " +
-            "AND t.category.name = :categoryName")
+            "AND t.category.name = :categoryName AND t.member.memberId = :memberId")
     List<Todo> findHomeTodoByCalendarIdANDCategoryId(@Param("calendarId") Long calendarId,
-                                                     @Param("categoryName") String categoryName);
+                                                     @Param("categoryName") String categoryName,
+                                                     @Param("memberId") Long memberId);
     @Query("SELECT t.category.categoryId FROM Todo t " +
             // "JOIN FETCH t.member m " +
             "WHERE t.calendar.calendarId = :calendarId")

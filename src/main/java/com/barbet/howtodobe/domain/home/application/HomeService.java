@@ -54,7 +54,7 @@ public class HomeService {
         // LocalDate를 Date로 변환
         java.sql.Date sqlDate = java.sql.Date.valueOf(selectedDate);
 
-        Long calendarId = calendarRepository.findBySelectedDate(sqlDate)
+        Long calendarId = calendarRepository.findBySelectedDate(sqlDate, member.getMemberId())
                 .orElseThrow(() -> new CustomException(NOT_EXIST_CALENDAR));
 
         // 선택한 날짜에 대한 투두 리스트 불러옴
@@ -81,7 +81,7 @@ public class HomeService {
             String categoryName = category.getName();
             allCategoryNameList.add(categoryName); // 카테고리 리스트 만듦
 
-            List<Todo> todo = todoRepository.findHomeTodoByCalendarIdANDCategoryId(calendarId, categoryName);
+            List<Todo> todo = todoRepository.findHomeTodoByCalendarIdANDCategoryId(calendarId, categoryName, member.getMemberId());
 
             if (todo.isEmpty()) {
                 todayTodoList.add(null);
