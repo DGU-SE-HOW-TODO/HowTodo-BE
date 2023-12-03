@@ -1,5 +1,6 @@
 package com.barbet.howtodobe.domain.member.domain;
 
+import com.barbet.howtodobe.global.exception.CustomException;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+
+import static com.barbet.howtodobe.global.exception.CustomErrorCode.NOT_EXIST_PASSWORD;
 
 @Entity
 @Data
@@ -61,12 +64,17 @@ public class Member implements UserDetails {
         return true;
     }
 
-    public Member hashPassword(PasswordEncoder bCryptPasswordEncoder) {
-        this.password = bCryptPasswordEncoder.encode(this.password);
-        return this;
-    }
 
+    // 비밀번호 체크는 프론트가 한다고 한거 아녔남?
     public boolean checkPassword(String plainPw, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(plainPw, this.password);
+    }
+
+    public void encodePassword(PasswordEncoder passwordEncoder) {
+        if (password != null) {
+            this.password = passwordEncoder.encode(password);
+        } else {
+            new CustomException(NOT_EXIST_PASSWORD);
+        }
     }
 }

@@ -38,7 +38,7 @@ public class MemberRepositoryTest {
                 .build();
         Member m = memberRepository.save(_member);
 
-        Member member = memberRepository.findByEmail(_member.getEmail());
+        Member member = memberRepository.findByEmailForDuplicateCheck(_member.getEmail());
         Assertions.assertEquals(member, _member);
         Assertions.assertEquals("member0@gmail.com", member.getEmail());
     }

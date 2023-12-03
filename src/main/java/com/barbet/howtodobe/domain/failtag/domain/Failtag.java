@@ -6,11 +6,11 @@ import com.barbet.howtodobe.domain.todo.domain.Todo;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Data
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "FAILTAG")
 @EqualsAndHashCode(callSuper = true)
 public class Failtag extends BaseTimeEntity {
     @Id
@@ -21,29 +21,35 @@ public class Failtag extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "todo_id")
-    private Todo todo;
-
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
-    private int week;
+    private Integer year;
 
     @Column(nullable = false)
-    private int month;
+    private Integer week;
 
     @Column(nullable = false)
-    private boolean isSelected;
+    private Integer month;
 
+    @ElementCollection
+    @CollectionTable(name = "selected_failtag", joinColumns = @JoinColumn(name = "failtag_id"))
+    @Column(name = "failtag_name")
+    private List<String> selectedFailtagList;
 
     @Builder
-    public Failtag(Member member, String name, boolean isSelected){
+    public Failtag(Member member,
+                   Integer year,
+                   Integer month,
+                   Integer week,
+                   String name,
+                   List<String> selectedFailtagList) {
         this.member = member;
+        this.year = year;
+        this.month = month;
+        this.week = week;
         this.name = name;
-        this.week = this.calculateWeek();
-        this.month = this.calculateMonth();
-        this.isSelected = isSelected;
+        this.selectedFailtagList = selectedFailtagList;
     }
 }
