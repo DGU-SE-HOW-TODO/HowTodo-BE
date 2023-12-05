@@ -64,10 +64,11 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             "JOIN FETCH t.member m " +
             "WHERE YEAR(t.createdDate) = :year " +
             "AND MONTH(t.createdDate) = :month " +
-            "AND t.week = :week")
+            "AND t.week = :week AND t.member.memberId = :memberId")
     List<Todo> findTodoBySelectedDate (@Param("year") Integer year,
                                  @Param("month") Integer month,
-                                 @Param("week") Integer week);
+                                 @Param("week") Integer week,
+                                       @Param("memberId") Long memberId);
 
     @Query("SELECT t FROM Todo t " +
             "JOIN FETCH t.member m " +
