@@ -72,7 +72,7 @@ public class StatisticService {
         Integer totalTodoWithFailTagCnt = todoList.size();
         Integer totalFailtagRates = weekFailtagList.values().stream().mapToInt(Long::intValue).sum();
 
-        return weekFailtagList.entrySet().stream()
+        List<NowFailtag> _weekFailtagList = weekFailtagList.entrySet().stream()
                 .map(entry -> {
                     String failtagName = entry.getKey();
                     Integer failtagCount = entry.getValue().intValue();
@@ -88,7 +88,10 @@ public class StatisticService {
                             .build();
                 })
                 .collect(Collectors.toList());
-
+        if (_weekFailtagList.size() > 3){
+            _weekFailtagList = _weekFailtagList.subList(0, 5);
+        }
+        return _weekFailtagList;
     }
 
     /** selectedDate에 따른 통계 값 전체 */
