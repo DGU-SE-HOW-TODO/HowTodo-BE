@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public class FeedbackResponseDTO {
 
+    private Integer month;
+    private Integer week;
     private String rateMessage;
     private String rateDetailMessage;
 
@@ -17,7 +19,9 @@ public class FeedbackResponseDTO {
     private String delayMessage;
     private String delayDetailMessage;
 
-    public FeedbackResponseDTO(String rateMessage,
+    public FeedbackResponseDTO(Integer month,
+            Integer week,
+            String rateMessage,
                                String rateDetailMessage,
                                Integer firstPriPercent,
                                Integer secondPriPercent,
@@ -26,6 +30,8 @@ public class FeedbackResponseDTO {
                                String priorityDetailMessage,
                                String delayMessage,
                                String delayDetailMessage) {
+        this.month = month;
+        this.week = week;
         this.rateMessage = rateMessage;
         this.rateDetailMessage = rateDetailMessage;
         this.firstPriPercent = firstPriPercent;
