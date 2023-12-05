@@ -99,11 +99,11 @@ public class FeedbackService {
         }
 
         /** 달성률 피드백 */
-        List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
+        List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week, memberId);
         Integer nowTodoCnt = nowTodoList.size(); // 이번주 전체 투두
         List<Todo> nowTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
         Integer nowTodoDoneCnt = nowTodoDoneList.size(); // 이번주 달성한 투두
-        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1);
+        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1, memberId);
         Integer prevTodoCnt = prevTodoList.size(); // 저번주 전체 투두
         List<Todo> prevTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
         Integer prevTodoDoneCnt = prevTodoDoneList.size(); // 저번주 달성한 투두

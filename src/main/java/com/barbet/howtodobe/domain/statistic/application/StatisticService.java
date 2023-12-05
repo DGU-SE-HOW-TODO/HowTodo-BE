@@ -44,7 +44,7 @@ public class StatisticService {
 
         Integer totalTodoCategoryCnt = todoList.size();
 
-        return weekCategoryList.entrySet().stream()
+        List<NowCategory> _weekCategory = weekCategoryList.entrySet().stream()
                 .map(entry -> {
                     String categoryName = entry.getKey().getName();
                     Integer nowCategoryRate = (totalTodoCategoryCnt != 0)
@@ -56,6 +56,11 @@ public class StatisticService {
                             .build();
                 })
                 .collect(Collectors.toList());
+
+        if (_weekCategory.size() > 3){
+            _weekCategory = _weekCategory.subList(0, 3);
+        }
+        return _weekCategory;
     }
 
     /** 실패태그 통계 정보 */
@@ -83,6 +88,7 @@ public class StatisticService {
                             .build();
                 })
                 .collect(Collectors.toList());
+
     }
 
     /** selectedDate에 따른 통계 값 전체 */
@@ -103,12 +109,12 @@ public class StatisticService {
 
         /** 투두 관련 */
         // 이번주 투두 리스트
-        List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week);
+        List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week, memberId);
         List<Todo> nowTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
         Integer nowTodoCnt = nowTodoList.size();
         Integer nowTodoDoneCnt = nowTodoDoneList.size();
 
-        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1);
+        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1, memberId);
         List<Todo> prveTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week-1);
         Integer prevTodoCnt = prevTodoList.size();
         Integer prevTodoDoneCnt = prveTodoDoneList.size();
@@ -124,7 +130,7 @@ public class StatisticService {
         }
 
         /** 대분류 통계 */
-        List<Todo> todoListForCategory = todoRepository.findTodoBySelectedDate(year, month, week);
+        List<Todo> todoListForCategory = todoRepository.findTodoBySelectedDate(year, month, week, memberId);
         List<NowCategory> nowCategoryData = getWeekCategory(todoListForCategory);
         String nowBestCateogry = null;
         if (!nowCategoryData.isEmpty()) {
@@ -135,13 +141,13 @@ public class StatisticService {
         }
 
         /** 실패태그 통계 */
-        List<Todo> todoListForFailtag = todoRepository.findTodoBySelectedDate(year, month, week);
+        List<Todo> todoListForFailtag = todoRepository.findTodoBySelectedDate(year, month, week, memberId);
         List<NowFailtag> nowFailTagData = getWeekFailtagList(todoListForFailtag);
 
         String nowWorstFailTag = null;
         if (!nowFailTagData.isEmpty()) {
             nowFailTagData = nowFailTagData.stream()
-                    .sorted(Comparator.comparing(NowFailtag::getNowFailtagRate))
+                    .sorted(Comparator.comparing(NowFailtag::getNowFailtagRate).reversed())
                     .collect(Collectors.toList());
             nowWorstFailTag = nowFailTagData.get(0).getNowFailtag();
         }
