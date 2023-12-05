@@ -170,7 +170,10 @@ public class FeedbackService {
         delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
         delayDetailMessage = getDetailMessageByDelayCnt(delayTodoCnt);
 
-        return new FeedbackResponseDTO(rateMessage,
+        return new FeedbackResponseDTO(
+                month,
+                week - 47,
+                rateMessage,
                 rateDetailMessage,
                 veryImportantTodoPercent,
                 importantTodoPercent,
