@@ -9,14 +9,14 @@ import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.domain.todo.dto.TodoAssignRequestDTO;
-import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
-import com.barbet.howtodobe.global.exception.CustomException;
+import com.barbet.howtodobe.global.util.JwtTokenProvider;
+import com.barbet.howtodobe.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.USER_NOT_FOUND;
+import static com.barbet.howtodobe.global.common.exception.CustomResponseCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +44,7 @@ public class TodoAssignService {
                 .isFixed(false)
                 .isDelay(false)
                 .isChecked(false)
-                .week(cal.calculateWeek())
+                .week(cal.calculateWeek()+1)
                 .name(todoAssignRequestDTO.getTodo())
                 .priority(todoAssignRequestDTO.getPriority())
                 .build();
