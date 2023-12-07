@@ -9,8 +9,8 @@ import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
-import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
-import com.barbet.howtodobe.global.exception.CustomException;
+import com.barbet.howtodobe.global.util.JwtTokenProvider;
+import com.barbet.howtodobe.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
+import static com.barbet.howtodobe.global.common.exception.CustomResponseCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +44,10 @@ public class FeedbackService {
         return (prevRate == null || nowRate == null) ? null : nowRate.intValue() - prevRate.intValue();
     }
 
-    /** 미루기 피드백 */
-    // 가장 많이 미룬 카테고리 id
+    /** 미루기 피드백
+     * 가장 많이 미룬 카테고리 id
+     */
     private Long getMostDelayCategoryId(List<Todo> isDelayTodoList) {
-
-        // key: 카테고리 id, value: 미룬 투두 수
         Map<Long, Long> categoryCntMap = isDelayTodoList.stream()
                 .collect(Collectors.groupingBy(todo -> todo.getCategory().getCategoryId(), Collectors.counting()));
 
@@ -63,7 +62,6 @@ public class FeedbackService {
     // delay Message
     private String getMessageByDelayCnt(Integer delayTodoCnt, String mostDelayCategory) {
         if (delayTodoCnt == 0) {
-            // 미룬거 없으면 반환할 메시지 없음
             return null;
         } else {
             return FeedbackMessage.DELAY_MESSAGE.format(delayTodoCnt, mostDelayCategory);
@@ -77,36 +75,38 @@ public class FeedbackService {
         String randomDelayTipMessage = randomDelayTips[randomIdx].getMessage();
 
         if (delayTodoCnt == 0) {
-            return null; // 미룬거 없으면 반환할 메시지 없음
+            return null;
         } else if (delayTodoCnt >= 1 && delayTodoCnt <= 5) {
-            // 1~5개 미뤘을 때 메시지
             return FeedbackDetailMessage.DELAY_DETAIL_MESSAGE_1_5.format(delayTodoCnt);
         } else {
-            // 6개 이상 미뤘으면 랜덤으로 tip message 반환
             return FeedbackDetailMessage.DELAY_DETAIL_MESSAGE_6.format(randomDelayTipMessage);
         }
     }
+
 
     /** 피드백 조회 */
     public FeedbackResponseDTO getFeedback (Integer year, Integer month, Integer week, HttpServletRequest request) {
         Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        // 회원인지 체크
         Long memberId = jwtTokenProvider.getUserIdByServlet(request);
         if (memberId != null && !memberId.equals(member.getMemberId())) {
             throw new CustomException(USER_NOT_FOUND);
         }
 
+
         /** 달성률 피드백 */
+        // 이번주 투두 관련
         List<Todo> nowTodoList = todoRepository.findTodoBySelectedDate(year, month, week, memberId);
-        Integer nowTodoCnt = nowTodoList.size(); // 이번주 전체 투두
+        Integer nowTodoCnt = nowTodoList.size(); 
         List<Todo> nowTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
-        Integer nowTodoDoneCnt = nowTodoDoneList.size(); // 이번주 달성한 투두
-        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week-1, memberId);
-        Integer prevTodoCnt = prevTodoList.size(); // 저번주 전체 투두
+        Integer nowTodoDoneCnt = nowTodoDoneList.size();
+        
+        // 저번주 투두 관련
+        List<Todo> prevTodoList = todoRepository.findTodoBySelectedDate(year, month, week, memberId);
+        Integer prevTodoCnt = prevTodoList.size();
         List<Todo> prevTodoDoneList = todoRepository.findTodoBySelectedDateAndIsChecked(year, month, week);
-        Integer prevTodoDoneCnt = prevTodoDoneList.size(); // 저번주 달성한 투두
+        Integer prevTodoDoneCnt = prevTodoDoneList.size();
 
         Double prevTodoRate = (prevTodoCnt == 0) ? 0.0 : ((double) prevTodoDoneCnt / prevTodoCnt) * 100.0;
         Double nowTodoRate = (nowTodoCnt == 0) ? 0.0 : ((double) nowTodoDoneCnt / nowTodoCnt) * 100.0;
@@ -116,17 +116,18 @@ public class FeedbackService {
         String rateMessage;
         String rateDetailMessage;
 
-        if (nowTodoRate >= 50) { // 달성률이 50% 이상인 경우
+        if (nowTodoRate >= 50) {
             rateMessage = null;
             rateDetailMessage = null;
-        } else { // 달성률이 50% 미만인 경우
-            if (rateOfChange > 0) { // 달성률이 오른 경우
+        } else {
+            if (rateOfChange > 0) {
                 rateMessage = FeedbackMessage.INCREASED_RATE_MESSAGE.format(rateOfChange);
-            } else { // 달성률이 떨어진 경우
+            } else {
                 rateMessage = FeedbackMessage.DECREASED_RATE_MESSAGE.format(rateOfChange);
             }
             rateDetailMessage = FeedbackDetailMessage.RATE_DETAIL_MESSAGE.getDetailMessage();
         }
+
 
         /** 우선순위 피드백 */
         String priorityMessage;
@@ -143,7 +144,6 @@ public class FeedbackService {
         Integer importantTodoPercent = calculateCompletionRate(importantTodoCnt, importantTodoDoneCnt);
         Integer notImportantTodoPercent = calculateCompletionRate(notImportantTodoCnt, notImportantTodoDoneCnt);
 
-        // 우선순위가 [매우 중요]인게 달성률이 가장 낮은 경우
         if (veryImportantTodoPercent < importantTodoPercent && veryImportantTodoPercent < notImportantTodoPercent) {
             priorityMessage = FeedbackMessage.PRIORITY_MESSAGE.getMessage();
             priorityDetailMessage = FeedbackDetailMessage.PRIORITY_DETAIL_MESSAGE.getDetailMessage();
@@ -166,13 +166,12 @@ public class FeedbackService {
             mostDelayCategory = categoryRepository.findCategoryByCategoryId(getMostDelayCategoryId(isDelayTodoList)).getName();
         }
 
-        // delayTodoCnt에 따라 보여주는 메시지 값 설정하기
         delayMessage = getMessageByDelayCnt(delayTodoCnt, mostDelayCategory);
         delayDetailMessage = getDetailMessageByDelayCnt(delayTodoCnt);
 
         return new FeedbackResponseDTO(
                 month,
-                week - 47,
+                week,
                 rateMessage,
                 rateDetailMessage,
                 veryImportantTodoPercent,
