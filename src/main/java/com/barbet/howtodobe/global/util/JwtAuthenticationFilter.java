@@ -1,5 +1,6 @@
-package com.barbet.howtodobe.global.eunse;
+package com.barbet.howtodobe.global.util;
 
+import com.barbet.howtodobe.global.util.JwtTokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;

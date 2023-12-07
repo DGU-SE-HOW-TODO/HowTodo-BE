@@ -1,9 +1,10 @@
-package com.barbet.howtodobe.global.eunse;
+package com.barbet.howtodobe.global.util;
 
 import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
-import com.barbet.howtodobe.global.exception.CustomErrorCode;
-import com.barbet.howtodobe.global.exception.CustomException;
+import com.barbet.howtodobe.domain.member.application.CustomMemberDetailService;
+import com.barbet.howtodobe.global.common.exception.CustomException;
+import com.barbet.howtodobe.global.common.exception.CustomResponseCode;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,16 +19,15 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
+import static com.barbet.howtodobe.global.common.exception.CustomResponseCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
 
-    @Value("HOWTODOBESECRETKEY2023112020011116202210082002091620231120200111162022100820020916202311202001111620221008200209162023112020011116202210082002091620231120200111162022100820020916")
+    @Value("${JWT_TOKEN}")
     private String secretKey;
 
     //토큰 유효시간 7일로 설정
@@ -95,7 +95,7 @@ public class JwtTokenProvider {
         if (token != null && validateToken(token)) {
             String userPk = getUserPk(token);
             Member memeber = memberRepository.findByEmail(userPk)
-                    .orElseThrow(() -> new CustomException(CustomErrorCode.USER_NOT_FOUND));
+                    .orElseThrow(() -> new CustomException(CustomResponseCode.USER_NOT_FOUND));
             return memeber.getMemberId();
         }
         return null;
