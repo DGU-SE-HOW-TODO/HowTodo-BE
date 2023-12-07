@@ -2,12 +2,11 @@ package com.barbet.howtodobe.domain.member.api;
 
 import com.barbet.howtodobe.domain.member.application.MemberEmailDuplicateService;
 import com.barbet.howtodobe.domain.member.application.MemberSignInService;
-import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.dto.SignInResponseDTO;
 import com.barbet.howtodobe.domain.member.dto.SignUpRequestDTO;
+import com.barbet.howtodobe.global.common.exception.CustomResponseCode;
 import com.barbet.howtodobe.global.common.response.ApiStatus;
-import com.barbet.howtodobe.global.common.response.HowTodoStatus;
-import com.barbet.howtodobe.global.exception.CustomException;
+import com.barbet.howtodobe.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.EMAIL_ALREADY_EXIST;
+import static com.barbet.howtodobe.global.common.exception.CustomResponseCode.EMAIL_ALREADY_EXIST;
 
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -51,35 +50,17 @@ public class MemberApi {
             boolean isDuplicate = memberEmailDuplicateService.EmailDuplicateCheck(email);
             if (isDuplicate) {
                 return new ResponseEntity(
-                        new ApiStatus(HowTodoStatus.DUPLICATE_EMAIL, "중복된 이메일"),
+                        new ApiStatus(CustomResponseCode.DUPLICATE_EMAIL, "중복된 이메일"),
                         httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
             }
             return new ResponseEntity(
-                    new ApiStatus(HowTodoStatus.OK, "이메일 중복 X"),
+                    new ApiStatus(CustomResponseCode.SUCCESS, "이메일 중복 X"),
                     httpHeaders, HttpStatus.OK);
         }
         catch (RuntimeException e){
             return new ResponseEntity(
-                    new ApiStatus(HowTodoStatus.INTERNEL_SERVER_ERROR, e.getMessage()),
+                    new ApiStatus(CustomResponseCode.INTERNAL_SERVER_ERROR, e.getMessage()),
                     httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-//        @PostMapping("/signup")
-//        public ResponseEntity<Void> signUp(@RequestBody SignUpRequestDTO request) {
-//        singUpService.singUp(request);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<String> authorize(@RequestBody SignInRequestDTO signInRequestDTO){
-//        Member _member = memberSignInService.signIn(signInRequestDTO);
-//        String accessToken = tokenProvider.createToken(_member, 8640000);
-//        HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.add("Authorization", "Bearer " + accessToken);
-//        SignInResponseDTO signInResponseDTO = new SignInResponseDTO("정상적으로 로그인 되었습니다.");
-//
-//        return new ResponseEntity(signInResponseDTO, httpHeaders, HttpStatus.OK);
-//    }
-
 }
