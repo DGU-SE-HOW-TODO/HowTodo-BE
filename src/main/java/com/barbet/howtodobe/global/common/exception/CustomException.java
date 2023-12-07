@@ -1,19 +1,19 @@
-package com.barbet.howtodobe.global.exception;
+package com.barbet.howtodobe.global.common.exception;
 
 import lombok.Getter;
 
 @Getter
 public class CustomException extends RuntimeException {
 
-    private final CustomErrorCode customErrorCode;
+    private final CustomResponseCode customErrorCode;
     private final String message;
 
-    public CustomException(CustomErrorCode customErrorCode) {
+    public CustomException(CustomResponseCode customErrorCode) {
         this.customErrorCode = customErrorCode;
         this.message = customErrorCode.getMessage();
     }
 
-    public CustomException (CustomErrorCode customErrorCode, String message) {
+    public CustomException (CustomResponseCode customErrorCode, String message) {
         this.customErrorCode = customErrorCode;
         this.message = message;
     }
