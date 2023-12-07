@@ -15,13 +15,12 @@ import java.util.List;
 public interface FailtagRepository extends JpaRepository<Failtag, Long> {
 
     @Query("SELECT f FROM Failtag f "+
+            "WHERE f.week = :week "+
+            "AND f.member.memberId = :memberId")
+    List<Failtag> findFailtagsBySelectedDateAndMember (@Param("week") Integer week,
+                                                       @Param("memberId") Long memberId);
+
+    @Query("SELECT f FROM Failtag f "+
             "WHERE f.week = :week")
     List<Failtag> findFailtagsBySelectedDate (@Param("week") Integer week);
-
-    @Transactional
-    @Modifying
-    @Query("DELETE FROM Failtag f " +
-            "WHERE f.member.memberId = :memberId OR f.member.memberId IS NULL")
-    int deleteFailTagByMemberId(@Param("memberId") Long memberId);
-
 }
