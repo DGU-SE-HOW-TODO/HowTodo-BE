@@ -1,7 +1,7 @@
 package com.barbet.howtodobe.domain.statistic.dto;
 
-import com.barbet.howtodobe.domain.nowCategory.domain.NowCategory;
-import com.barbet.howtodobe.domain.nowFailtag.domain.NowFailtag;
+import com.barbet.howtodobe.domain.statistic.domain.now.NowCategory;
+import com.barbet.howtodobe.domain.statistic.domain.now.NowFailtag;
 import lombok.Getter;
 
 import java.time.LocalDate;
