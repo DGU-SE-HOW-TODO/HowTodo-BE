@@ -30,12 +30,5 @@ public abstract class BaseTimeEntity {
 
         return weekNumber;
     }
-
-    public int calculateMonth(){
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        int month = this.createdDate.getMonthValue();
-
-        return month;
-    }
 }
 
