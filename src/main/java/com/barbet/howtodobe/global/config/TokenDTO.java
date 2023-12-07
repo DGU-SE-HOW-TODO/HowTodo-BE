@@ -1,4 +1,4 @@
-package com.barbet.howtodobe.global.eunse;
+package com.barbet.howtodobe.global.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

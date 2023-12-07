@@ -10,8 +10,8 @@ import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
 import com.barbet.howtodobe.domain.todo.dto.TodoFailtagRequestDTO;
-import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
-import com.barbet.howtodobe.global.exception.CustomException;
+import com.barbet.howtodobe.global.util.JwtTokenProvider;
+import com.barbet.howtodobe.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
+import static com.barbet.howtodobe.global.common.exception.CustomResponseCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +42,6 @@ public class TodoWithFailtagService {
         Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        // 회원인지 체크
         Long memberId = jwtTokenProvider.getUserIdByServlet(request);
         if (memberId != null && !memberId.equals(member.getMemberId())) {
             throw new CustomException(USER_NOT_FOUND);
@@ -50,7 +49,6 @@ public class TodoWithFailtagService {
 
         List<Failtag> failtags = failtagRepository.findFailtagsBySelectedDate(week);
 
-        // 각 Failtag 객체에서 selectedFailtagList를 추출하여 리스트로 만들기
         List<String> selectedFailtagList = failtags.stream()
                 .flatMap(failtag -> failtag.getSelectedFailtagList().stream())
                 .collect(Collectors.toList());
@@ -65,7 +63,6 @@ public class TodoWithFailtagService {
         Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        // 회원인지 체크
         Long memberId = jwtTokenProvider.getUserIdByServlet(httpServletRequest);
         if (memberId != null && !memberId.equals(member.getMemberId())) {
             throw new CustomException(USER_NOT_FOUND);
@@ -82,9 +79,7 @@ public class TodoWithFailtagService {
                 .collect(Collectors.toList());
 
 
-        // 일단 이번주 실패태그(5개) 잘 등록 되어 있는지 체크
         if (selectedFailtagList != null && !selectedFailtagList.isEmpty()) {
-            // thisWeekFailtagList에 selectedFailTag 있는지 확인
             if (!selectedFailtagList.contains(request.getFailTagName())) {
                 throw new CustomException(INVALID_FAILTAG);
             } else {
@@ -95,39 +90,38 @@ public class TodoWithFailtagService {
             throw new CustomException(NOT_EXIST_WEEK_FAILTAG);
         }
 
-        todo.updateTodoDelay(true, member);
-        todoRepository.save(todo);
+        if (request.getIsDelay()) {
+            todo.updateTodoDelay(true, member);
+            todoRepository.save(todo);
 
-        Long calendarId = calendarRepository.findBySelectedDate(
-                Date.valueOf(todo.getCalendar().getDate().toLocalDate().plusDays(1)), memberId)
-                .orElseThrow(() -> new CustomException(NOT_EXIST_CALENDAR));
+            Long calendarId = calendarRepository.findBySelectedDate(
+                            Date.valueOf(todo.getCalendar().getDate().toLocalDate().plusDays(1)), memberId)
+                    .orElseThrow(() -> new CustomException(NOT_EXIST_CALENDAR));
 
-        Calendar calendar = calendarRepository.findById(calendarId)
-                .orElseThrow(() -> new CustomException(NOT_EXIST_CALENDAR));;
+            Calendar calendar = calendarRepository.findById(calendarId)
+                    .orElseThrow(() -> new CustomException(NOT_EXIST_CALENDAR));
+            ;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
-        LocalDate localDate = LocalDate.parse(calendar.getDate().toString(), formatter);
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
+            LocalDate localDate = LocalDate.parse(calendar.getDate().toString(), formatter);
 
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        Integer _week = localDate.get(woy);
+            TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+            Integer _week = localDate.get(woy);
 
-        Todo tomorrowTodo = Todo.builder()
-                .calendar(calendar)
-                .name(todo.getName())
-                .priority(todo.getPriority())
-                .isFixed(todo.getIsFixed())
-                .isChecked(false)
-                .isDelay(false)
-                .member(member)
-                .category(todo.getCategory())
-                .week(_week)
-                .build();
+            Todo tomorrowTodo = Todo.builder()
+                    .calendar(calendar)
+                    .name(todo.getName())
+                    .priority(todo.getPriority())
+                    .isFixed(todo.getIsFixed())
+                    .isChecked(false)
+                    .isDelay(false)
+                    .member(member)
+                    .category(todo.getCategory())
+                    .week(_week)
+                    .build();
 
-        todoRepository.save(tomorrowTodo);
-
-        // 미뤘는지 여부 반환
+            todoRepository.save(tomorrowTodo);
+        }
         return request.getIsDelay();
     }
-
-
 }

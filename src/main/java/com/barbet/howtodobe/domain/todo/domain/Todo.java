@@ -54,9 +54,6 @@ public class Todo extends BaseTimeEntity {
     @Column(nullable = true)
     private String failtagName;
 
-    /** 투두 주차만 따로 컬럼으로 설정
-     * : 투두 관련 쿼리 메서드가 없음
-     */
     private Integer week;
 
     public Todo(Calendar calendar, Member member, Category category, String name, String priority){

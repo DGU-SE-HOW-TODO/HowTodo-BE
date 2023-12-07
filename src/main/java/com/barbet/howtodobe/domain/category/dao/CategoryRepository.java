@@ -14,7 +14,6 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    // 대분류 ID로 대분류명 찾기
     Category findCategoryByCategoryId(Long categoryId);
 
     @Query("SELECT c.categoryId FROM Category c "+

@@ -1,5 +1,6 @@
 package com.barbet.howtodobe.global.common.response;
 
+import com.barbet.howtodobe.global.common.exception.CustomResponseCode;
 import lombok.*;
 
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class Message {
     public static Message createSuccessMessage(Object data){
         Message message = new Message();
         message.setData(data);
-        message.setApiStatus(new ApiStatus(HowTodoStatus.OK, null));
+        message.setApiStatus(new ApiStatus(CustomResponseCode.SUCCESS, null));
         return message;
     }
 }

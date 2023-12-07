@@ -27,38 +27,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             "AND t.isChecked = true")
     int getSuccessedTodoCnt(@Param("calendar_id") Long calendarId);
 
-    // calendar, category, name 비교
-    @Query(value = "SELECT t FROM Todo t " +
-            "WHERE t.calendar = :calendar_id " +
-            "and t.name = :name " +
-            "and t.category.categoryId = :category_id ")
-    Optional<Todo> findByCalCatName(@Param("calendar_id") Long calendarId,
-                                    @Param("category_id") Long categoryId,
-                                    @Param("name") String name);
-
-    @Query(value = "SELECT t FROM Todo t " +
-            "WHERE t.todoId = :todo_id AND t.category.categoryId = :category_id")
-    Optional<Todo> findByTodoCategoryId(@Param("todo_id") Long todoId,
-                                        @Param("category_id") Long categoryId);
-
-    @Transactional
-    @Modifying
-    @Query(value = "UPDATE Todo t SET t.isFixed = :is_fixed " +
-            "WHERE t.todoId = :todo_id AND t.category.categoryId = :category_id")
-    void updateIsFixed(@Param("is_fixed") boolean isFixed,
-                       @Param("todo_id") Long todoId,
-                       @Param("category_id") Long categoryId);
-
-    @Transactional
-    @Modifying
-    @Query(value = "UPDATE Todo t SET t.isChecked = :is_checked " +
-            "WHERE t.todoId = :todo_id AND t.category.categoryId = :category_id")
-    void updateIsChecked(@Param("is_checked") boolean isChecked,
-                         @Param("todo_id") Long todoId,
-                         @Param("category_id") Long categoryId);
-
-
-
     /** for Statistic & Home Info */
     @Query("SELECT t FROM Todo t " +
             "JOIN FETCH t.member m " +
@@ -71,30 +39,16 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
                                        @Param("memberId") Long memberId);
 
     @Query("SELECT t FROM Todo t " +
-            "JOIN FETCH t.member m " +
-            "WHERE t.createdDate = :selectedDate")
-    List<Todo> findHomeTodoBySelectedDate (@Param("selectedDate")LocalDate selectedDate);
-
-    @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
             "WHERE t.calendar.calendarId = :calendarId")
     List<Todo> findHomeTodoByCalendarId(@Param("calendarId") Long calendarId);
 
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
             "WHERE t.calendar.calendarId = :calendarId " +
             "AND t.category.name = :categoryName AND t.member.memberId = :memberId")
     List<Todo> findHomeTodoByCalendarIdANDCategoryId(@Param("calendarId") Long calendarId,
                                                      @Param("categoryName") String categoryName,
                                                      @Param("memberId") Long memberId);
-    @Query("SELECT t.category.categoryId FROM Todo t " +
-            // "JOIN FETCH t.member m " +
-            "WHERE t.calendar.calendarId = :calendarId")
-    Optional<Long> findHomeTodoByCategoryId(@Param("calendarId") Long calendarId);
-
-
     @Query("SELECT t FROM Todo t " +
-            // "JOIN FETCH t.member m " +
             "WHERE t.calendar.calendarId = :calendarId " +
             "AND t.isChecked = true ")
     List<Todo> findHomeTodoByCalendarIdAndIsChecked (@Param("calendarId")Long calendarId);
@@ -108,17 +62,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     List<Todo> findTodoBySelectedDateAndIsChecked (@Param("year") Integer year,
                                                 @Param("month") Integer month,
                                                 @Param("week") Integer week);
-    @Query("SELECT t FROM Todo t " +
-            "JOIN FETCH t.member m " +
-            "WHERE YEAR(t.createdDate) = :year " +
-            "AND MONTH(t.createdDate) = :month " +
-            "AND t.week = :week " +
-            "AND t.category.categoryId = :categoryId")
-    List<Todo> categoryForStatistic (@Param("year") Integer year,
-                                     @Param("month") Integer month,
-                                     @Param("week") Integer week,
-                                     @Param("categoryId") Long categoryId);
-
 
     /** for feekback */
     @Query("SELECT t FROM Todo t " +

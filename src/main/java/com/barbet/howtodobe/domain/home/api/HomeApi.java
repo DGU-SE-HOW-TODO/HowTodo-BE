@@ -24,7 +24,6 @@ public class HomeApi {
             HttpServletRequest httpServletRequest) {
 
         if (selectedDate == null) {
-            // selectedDate를 선택하지 않은 경우 현재 날짜로 설정
             selectedDate = LocalDate.now();
         }
         return ResponseEntity.ok().body(homeService.getHomeInfo(selectedDate, httpServletRequest));

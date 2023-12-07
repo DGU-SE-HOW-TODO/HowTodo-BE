@@ -34,7 +34,6 @@ public class FailtagApi {
         return ResponseEntity.ok().build();
     }
 
-
     @GetMapping("/{selectedDate}")
     public ResponseEntity<Object> getSelected5Failtag(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate selectedDate,
                                                       HttpServletRequest httpServletRequest) {

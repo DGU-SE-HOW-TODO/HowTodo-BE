@@ -1,5 +1,7 @@
-package com.barbet.howtodobe.global.eunse;
+package com.barbet.howtodobe.global.config;
 
+import com.barbet.howtodobe.global.util.JwtAuthenticationFilter;
+import com.barbet.howtodobe.global.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

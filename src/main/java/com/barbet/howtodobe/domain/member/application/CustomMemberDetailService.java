@@ -1,8 +1,8 @@
-package com.barbet.howtodobe.global.eunse;
+package com.barbet.howtodobe.domain.member.application;
 
 import com.barbet.howtodobe.domain.member.dao.MemberRepository;
-import com.barbet.howtodobe.global.exception.CustomErrorCode;
-import com.barbet.howtodobe.global.exception.CustomException;
+import com.barbet.howtodobe.global.common.exception.CustomException;
+import com.barbet.howtodobe.global.common.exception.CustomResponseCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +17,7 @@ public class CustomMemberDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return (UserDetails) memberRepository.findByEmail(username)
-                .orElseThrow(() -> new CustomException(CustomErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(CustomResponseCode.USER_NOT_FOUND));
     }
 
 }

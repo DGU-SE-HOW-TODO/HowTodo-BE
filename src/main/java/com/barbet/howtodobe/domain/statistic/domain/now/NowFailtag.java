@@ -1,4 +1,4 @@
-package com.barbet.howtodobe.domain.nowCategory.domain;
+package com.barbet.howtodobe.domain.statistic.domain.now;
 
 import com.barbet.howtodobe.domain.statistic.domain.Statistic;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,9 +9,9 @@ import javax.persistence.*;
 @Getter
 @Entity
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class NowCategory {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class NowFailtag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,12 +23,6 @@ public class NowCategory {
     @JsonIgnore
     private Statistic statistic;
 
-    private String nowCategory;
-    private Integer nowCategoryRate;
-
-    public NowCategory(String nowCategory, Integer nowCategoryRate) {
-        this.id = id;
-        this.nowCategory = nowCategory;
-        this.nowCategoryRate = nowCategoryRate;
-    }
+    private String nowFailtag;
+    private Integer nowFailtagRate;
 }

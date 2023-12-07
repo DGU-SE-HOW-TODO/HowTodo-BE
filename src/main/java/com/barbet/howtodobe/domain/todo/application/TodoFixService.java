@@ -6,9 +6,8 @@ import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
-import com.barbet.howtodobe.domain.todo.dto.TodoFixRequestDTO;
-import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
-import com.barbet.howtodobe.global.exception.CustomException;
+import com.barbet.howtodobe.global.util.JwtTokenProvider;
+import com.barbet.howtodobe.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,8 @@ import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
 
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
+import static com.barbet.howtodobe.global.common.exception.CustomResponseCode.TODO_NOT_FOUND;
+import static com.barbet.howtodobe.global.common.exception.CustomResponseCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,6 @@ public class TodoFixService {
     private final MemberRepository memberRepository;
     private final CalendarRepository calendarRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
 
     public void updateTodoFixed (Long todoId) {
         Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
@@ -44,9 +43,8 @@ public class TodoFixService {
             List<Calendar> calendars = calendarRepository.findAllByMemberId(member.getMemberId());
 
             todo.updateTodoFixed(true, member);
-            // 현재 사용자가 갖고 있는 캘린더들에 동일한 내용의 투두 추가
             calendars.stream()
-                    .forEach(calendar ->{
+                    .forEach(calendar -> {
                         if (todo.getCalendar().getDate().compareTo(calendar.getDate()) >= 0){
                             return;
                         }
@@ -65,11 +63,10 @@ public class TodoFixService {
                             .isChecked(false)
                             .isDelay(false)
                             .member(member)
-                            .category(todo.getCategory())
-                                            .week(week)
+                            .category(todo.getCategory()).week(week)
                             .build());
                     });
         }
-//        todoRepository.save(todo);
+        todoRepository.save(todo);
     }
 }
