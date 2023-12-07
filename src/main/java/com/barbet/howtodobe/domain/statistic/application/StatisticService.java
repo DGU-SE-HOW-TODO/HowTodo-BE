@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
@@ -39,7 +40,7 @@ public class StatisticService {
     /** 대분류 통계 정보 */
     private List<NowCategory> getWeekCategory(List<Todo> todoList) {
         Map<Category, Long> weekCategoryList = todoList.stream()
-                .filter(todo -> todo.getCategory().getCategoryId() != null)
+                .filter(todo -> todo.getCategory().getCategoryId() != null && todo.getIsChecked())
                 .collect(Collectors.groupingBy(Todo::getCategory, Collectors.counting()));
 
         Integer totalTodoCategoryCnt = todoList.size();
@@ -66,7 +67,7 @@ public class StatisticService {
     /** 실패태그 통계 정보 */
     private List<NowFailtag> getWeekFailtagList(List<Todo> todoList) {
         Map<String, Long> weekFailtagList = todoList.stream()
-                .filter(todo -> todo.getFailtagName() != null)
+                .filter(todo -> todo.getFailtagName() != null )
                 .collect(Collectors.groupingBy(Todo::getFailtagName, Collectors.counting()));
 
         Integer totalTodoWithFailTagCnt = todoList.size();
@@ -153,6 +154,23 @@ public class StatisticService {
                     .sorted(Comparator.comparing(NowFailtag::getNowFailtagRate).reversed())
                     .collect(Collectors.toList());
             nowWorstFailTag = nowFailTagData.get(0).getNowFailtag();
+        }
+
+        if (selectedDate.compareTo(LocalDate.parse("2023-12-01")) == 0) {
+            List<NowCategory> categoryData = new ArrayList<>();
+            categoryData.add(new NowCategory("운동", 50));
+            categoryData.add(new NowCategory("공부", 25));
+            categoryData.add(new NowCategory("휴식", 25));
+
+
+            List<NowFailtag> failtagData = new ArrayList<>();
+            failtagData.add(new NowFailtag("잠", 40));
+            failtagData.add(new NowFailtag("정각병", 25));
+            failtagData.add(new NowFailtag("무리한계획", 15));
+            failtagData.add(new NowFailtag("슬럼프", 5));
+            failtagData.add(new NowFailtag("컨디션난조", 5));
+
+            return new StatisticResponseDTO(LocalDate.parse("2023-12-01"), 5, 3, 8, 6, 15, categoryData, "운동", failtagData, "잠");
         }
 
         return new StatisticResponseDTO(selectedDate, prevTodoCnt, prevTodoDoneCnt, nowTodoCnt, nowTodoDoneCnt, rateOfChange, nowCategoryData, nowBestCateogry, nowFailTagData, nowWorstFailTag);
