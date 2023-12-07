@@ -1,16 +1,18 @@
-package com.barbet.howtodobe.global.exception;
+package com.barbet.howtodobe.global.common.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum CustomErrorCode {
+public enum CustomResponseCode {
 
-    /** ErrorCode 각자 추가해서 사용하기 */
     // Common (1xxx)
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 1001, "서버 내부에 오류가 있습니다."),
+    NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, 1001, "해당 페이지를 찾을 수 없습니다."),
+    SUCCESS(HttpStatus.OK, 1003, "Success"),
 
     // Member (2xxx)
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, 2001, "사용자를 찾을 수 없습니다."),
@@ -20,6 +22,7 @@ public enum CustomErrorCode {
     INVALID_TOKEN_FORMAT(HttpStatus.BAD_REQUEST, 2005, "잘못된 토큰 형식입니다."),
     TOKEN_VALIDATION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 2006, "토큰 검증 중 오류가 발생했습니다."),
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, 2007, "잘못된 비밀번호입니다."),
+    DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST,2008,  "중복된 이메일 입니다."),
 
     // Category (3xxx)
     NOT_EXIST_WEEK_CATEGORY(HttpStatus.BAD_REQUEST, 3001, "이번주에 관한 카테고리가 없습니다."),
