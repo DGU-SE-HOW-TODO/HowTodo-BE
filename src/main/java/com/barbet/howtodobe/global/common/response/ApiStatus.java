@@ -1,21 +1,21 @@
 package com.barbet.howtodobe.global.common.response;
 
+import com.barbet.howtodobe.global.common.exception.CustomResponseCode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiStatus {
-    private String statusCode;
+    private int statusCode;
     private String statusCodeMessage;
     private String statusMessage;
 
-    public ApiStatus(HowTodoStatus howTodoStatus, String statusMessage) {
-        this.statusCode = howTodoStatus.getErrorCode();
-        this.statusCodeMessage = howTodoStatus.getErrorMessage();
+    public ApiStatus(CustomResponseCode howTodoStatus, String statusMessage) {
+        this.statusCode = howTodoStatus.getCode();
+        this.statusCodeMessage = howTodoStatus.getMessage();
         this.statusMessage = statusMessage;
     }
 }
