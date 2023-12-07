@@ -22,7 +22,7 @@ public class Calendar extends BaseTimeEntity {
     private Member member;
 
     @Column(nullable = false)
-    private int successRate; // 0~100
+    private int successRate;
 
     @Column(nullable = false)
     private Date date;
@@ -33,9 +33,5 @@ public class Calendar extends BaseTimeEntity {
         this.date = date;
     }
 
-    private void calculateSuccessRate(){
-//        this.successRate =
-        // 이슈: 여기서 쿼리가 들어가도 될까 , 아니면 외부 메소드에서 처리
-    }
-
+    private void calculateSuccessRate() { }
 }

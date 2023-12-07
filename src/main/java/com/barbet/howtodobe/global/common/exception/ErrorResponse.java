@@ -1,4 +1,4 @@
-package com.barbet.howtodobe.global.exception;
+package com.barbet.howtodobe.global.common.exception;
 
 import lombok.Builder;
 import lombok.Getter;
