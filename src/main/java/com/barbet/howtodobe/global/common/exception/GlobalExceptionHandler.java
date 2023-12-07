@@ -1,4 +1,4 @@
-package com.barbet.howtodobe.global.exception;
+package com.barbet.howtodobe.global.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
 
     // CustomErrorCode기반 ResponseEntity 생성
-    private ResponseEntity<Object> handleExceptionInternal(CustomErrorCode customErrorCode, String errorMessage) {
+    private ResponseEntity<Object> handleExceptionInternal(CustomResponseCode customErrorCode, String errorMessage) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .errorCode(customErrorCode.getCode())
                 .message(errorMessage)
