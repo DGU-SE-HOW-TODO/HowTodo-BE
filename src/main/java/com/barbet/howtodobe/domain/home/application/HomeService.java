@@ -8,19 +8,17 @@ import com.barbet.howtodobe.domain.member.dao.MemberRepository;
 import com.barbet.howtodobe.domain.member.domain.Member;
 import com.barbet.howtodobe.domain.todo.dao.TodoRepository;
 import com.barbet.howtodobe.domain.todo.domain.Todo;
-import com.barbet.howtodobe.global.eunse.JwtTokenProvider;
-import com.barbet.howtodobe.global.exception.CustomException;
+import com.barbet.howtodobe.global.util.JwtTokenProvider;
+import com.barbet.howtodobe.global.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.barbet.howtodobe.global.exception.CustomErrorCode.*;
+import static com.barbet.howtodobe.global.common.exception.CustomResponseCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,21 +42,16 @@ public class HomeService {
         Member member = memberRepository.findByMemberId(jwtTokenProvider.getUserId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        // 회원인지 체크
         Long memberId = jwtTokenProvider.getUserIdByServlet(request);
         if (memberId != null && !memberId.equals(member.getMemberId())) {
             throw new CustomException(USER_NOT_FOUND);
         }
 
-        LocalDate todayDate = LocalDate.now(); // 현재 날짜
-
-        // LocalDate를 Date로 변환
         java.sql.Date sqlDate = java.sql.Date.valueOf(selectedDate);
 
         Long calendarId = calendarRepository.findBySelectedDate(sqlDate, member.getMemberId())
                 .orElseThrow(() -> new CustomException(NOT_EXIST_CALENDAR));
 
-        // 선택한 날짜에 대한 투두 리스트 불러옴
         List<Todo> homeTodoList = todoRepository.findHomeTodoByCalendarId(calendarId);
 
         Integer homeTodoCnt = homeTodoList.size();
@@ -68,23 +61,13 @@ public class HomeService {
         List<HomeResponseDTO.TodoCategoryData> todoCategoryDataList = new ArrayList<>();
         Map<Long, List<HomeResponseDTO.TodoCategoryData.TodoData>> todoDataList = new HashMap<>();
 
-        /*
-        todo를 통해서 카테고리를 불러오면, todo가 없는 경우에 카테고리가 안뜸
-        그래서 카테고리는 어차피 전부 고정이니까 카테고리를 먼저 싹 다 불러오고
-        불러온 카테고리 명칭 + 선택한 날짜에 맞는 todo를 뿌려주면 됨.
-         */
-
         List<Category> AllCategory = categoryRepository.findAllByMemberId(member.getMemberId());
-        /*System.out.println("category all:");
-        for (Category category: AllCategory){
-            System.out.println("cate id: " + category.getCategoryId());
-        }*/
         List<String> allCategoryNameList = new ArrayList<>();
 
         List<Todo> todayTodoList = new ArrayList<>();
         for (Category category : AllCategory) {
             String categoryName = category.getName();
-            allCategoryNameList.add(categoryName); // 카테고리 리스트 만듦
+            allCategoryNameList.add(categoryName);
 
             List<Todo> todo = todoRepository.findHomeTodoByCalendarIdANDCategoryId(calendarId, categoryName, member.getMemberId());
 
@@ -96,10 +79,9 @@ public class HomeService {
         }
 
         todayTodoList.stream()
-                .filter(Objects::nonNull) // Null 필터링 추가
+                .filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(Todo::getCategory))
                 .forEach(((_category, todoList) -> {
-                    // 할 일 목록을 DTO로 변환
                     Stream<Todo> _todoList = todoList.stream()
                             .filter(todo -> Objects.equals(todo.getCategory().getCategoryId(), _category.getCategoryId()));
                     List<HomeResponseDTO.TodoCategoryData.TodoData> tempTodoDataList = _todoList
@@ -120,9 +102,6 @@ public class HomeService {
                     todoDataList.put(_category.getCategoryId(), tempTodoDataList);
                 }));
 
-
-
-        // 카테고리 이름들을 TodoCategoryData에 추가
         for (String categoryName : allCategoryNameList) {
             Long categoryId = categoryRepository.findByCategoryName(categoryName, member.getMemberId()).orElseThrow(() -> new CustomException(NOT_EXIST_WEEK_CATEGORY));
             HomeResponseDTO.TodoCategoryData todoCategoryData = new HomeResponseDTO.TodoCategoryData(categoryId, categoryName);
